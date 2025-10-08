@@ -1,9 +1,33 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Truck, Package } from "lucide-react";
+import { Truck, Package, LogOut } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useState } from "react";
+import { User } from "@supabase/supabase-js";
+import { toast } from "sonner";
 
 const Navigation = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
+  
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success("Logged out successfully");
+    navigate("/");
+  };
   
   const isActive = (path: string) => location.pathname === path;
   
@@ -46,6 +70,17 @@ const Navigation = () => {
             <Button asChild variant="secondary" size="sm">
               <Link to="/post-truck">Post Truck</Link>
             </Button>
+            
+            {user ? (
+              <Button variant="ghost" onClick={handleLogout} size="sm">
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </Button>
+            ) : (
+              <Button asChild variant="default" size="sm">
+                <Link to="/auth">Login</Link>
+              </Button>
+            )}
           </div>
         </div>
       </div>

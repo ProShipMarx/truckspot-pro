@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import LoadCard from "@/components/LoadCard";
 import { Input } from "@/components/ui/input";
@@ -7,11 +7,26 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { mockLoads } from "@/data/mockData";
+import { supabase } from "@/integrations/supabase/client";
+import { User } from "@supabase/supabase-js";
 
 const FindLoads = () => {
   const [searchOrigin, setSearchOrigin] = useState("");
   const [searchDestination, setSearchDestination] = useState("");
   const [equipmentFilter, setEquipmentFilter] = useState<string>("all");
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const filteredLoads = mockLoads.filter(load => {
     const matchesOrigin = !searchOrigin || load.origin.toLowerCase().includes(searchOrigin.toLowerCase());
@@ -95,7 +110,7 @@ const FindLoads = () => {
 
         <div className="grid md:grid-cols-2 gap-6">
           {filteredLoads.map((load) => (
-            <LoadCard key={load.id} load={load} />
+            <LoadCard key={load.id} load={load} isAuthenticated={!!user} />
           ))}
         </div>
 
