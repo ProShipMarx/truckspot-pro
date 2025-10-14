@@ -10,6 +10,8 @@ import FindLoads from "./pages/FindLoads";
 import FindTrucks from "./pages/FindTrucks";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
+import SignupCarrier from "./pages/SignupCarrier";
+import SignupShipper from "./pages/SignupShipper";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +24,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/signup-carrier" element={<SignupCarrier />} />
+          <Route path="/signup-shipper" element={<SignupShipper />} />
           <Route path="/post-load" element={<PostLoad />} />
           <Route path="/post-truck" element={<PostTruck />} />
           <Route path="/find-loads" element={<FindLoads />} />

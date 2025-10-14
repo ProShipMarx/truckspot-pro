@@ -128,45 +128,23 @@ const Auth = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Create Account</CardTitle>
-                <CardDescription>Sign up to post loads and view full freight details</CardDescription>
+                <CardDescription>Choose your account type to get started</CardDescription>
               </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSignup} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
-                    <Input
-                      id="signup-email"
-                      type="email"
-                      placeholder="you@example.com"
-                      value={signupData.email}
-                      onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password">Password</Label>
-                    <Input
-                      id="signup-password"
-                      type="password"
-                      value={signupData.password}
-                      onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-confirm">Confirm Password</Label>
-                    <Input
-                      id="signup-confirm"
-                      type="password"
-                      value={signupData.confirmPassword}
-                      onChange={(e) => setSignupData({ ...signupData, confirmPassword: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? "Creating account..." : "Sign Up"}
-                  </Button>
-                </form>
+              <CardContent className="space-y-4">
+                <Button 
+                  className="w-full" 
+                  variant="secondary"
+                  onClick={() => navigate("/signup-carrier")}
+                >
+                  Sign Up as Carrier
+                </Button>
+                <Button 
+                  className="w-full" 
+                  variant="secondary"
+                  onClick={() => navigate("/signup-shipper")}
+                >
+                  Sign Up as Shipper
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
