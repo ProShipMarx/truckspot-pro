@@ -1,14 +1,25 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Calendar, Truck, Phone, Mail, Radio } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { MapPin, Calendar, Truck, Phone, Mail, Radio, Lock } from "lucide-react";
 import { Truck as TruckType } from "@/types/freight";
 import { format } from "date-fns";
+import { Link } from "react-router-dom";
 
 interface TruckCardProps {
   truck: TruckType;
+  isAuthenticated: boolean;
 }
 
-const TruckCard = ({ truck }: TruckCardProps) => {
+const TruckCard = ({ truck, isAuthenticated }: TruckCardProps) => {
+  const BlurredContent = ({ children }: { children: React.ReactNode }) => (
+    <div className="relative">
+      <div className="blur-sm select-none">{children}</div>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <Lock className="h-4 w-4 text-muted-foreground" />
+      </div>
+    </div>
+  );
   return (
     <Card className="hover:shadow-lg transition-all duration-200">
       <CardHeader className="pb-3">
@@ -34,30 +45,68 @@ const TruckCard = ({ truck }: TruckCardProps) => {
           </div>
           <div className="flex items-center gap-2">
             <Truck className="h-4 w-4 text-muted-foreground" />
-            <Badge variant="secondary">{truck.equipmentType}</Badge>
+            {isAuthenticated ? (
+              <Badge variant="secondary">{truck.equipmentType}</Badge>
+            ) : (
+              <BlurredContent>
+                <Badge variant="secondary">{truck.equipmentType}</Badge>
+              </BlurredContent>
+            )}
           </div>
         </div>
         
-        <div className="pt-3 border-t space-y-1.5">
-          <div className="flex items-center gap-2 text-sm">
-            <Phone className="h-4 w-4 text-muted-foreground" />
-            <span className="font-medium">{truck.contactName}</span>
-            <span className="text-muted-foreground">•</span>
-            <a href={`tel:${truck.contactPhone}`} className="text-primary hover:underline">
-              {truck.contactPhone}
-            </a>
+        {isAuthenticated ? (
+          <div className="pt-3 border-t space-y-1.5">
+            <div className="flex items-center gap-2 text-sm">
+              <Phone className="h-4 w-4 text-muted-foreground" />
+              <span className="font-medium">{truck.contactName}</span>
+              <span className="text-muted-foreground">•</span>
+              <a href={`tel:${truck.contactPhone}`} className="text-primary hover:underline">
+                {truck.contactPhone}
+              </a>
+            </div>
+            <div className="flex items-center gap-2 text-sm">
+              <Mail className="h-4 w-4 text-muted-foreground" />
+              <a href={`mailto:${truck.contactEmail}`} className="text-primary hover:underline">
+                {truck.contactEmail}
+              </a>
+            </div>
           </div>
-          <div className="flex items-center gap-2 text-sm">
-            <Mail className="h-4 w-4 text-muted-foreground" />
-            <a href={`mailto:${truck.contactEmail}`} className="text-primary hover:underline">
-              {truck.contactEmail}
-            </a>
+        ) : (
+          <div className="pt-3 border-t">
+            <BlurredContent>
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2 text-sm">
+                  <Phone className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-medium">{truck.contactName}</span>
+                  <span className="text-muted-foreground">•</span>
+                  <span>{truck.contactPhone}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <Mail className="h-4 w-4 text-muted-foreground" />
+                  <span>{truck.contactEmail}</span>
+                </div>
+              </div>
+            </BlurredContent>
+            <div className="mt-2 text-center">
+              <Link to="/auth">
+                <Button variant="outline" size="sm" className="w-full">
+                  Login to View Details
+                </Button>
+              </Link>
+            </div>
           </div>
-        </div>
+        )}
       </CardContent>
       
       <CardFooter className="pt-0 text-xs text-muted-foreground">
-        Posted {format(new Date(truck.postedDate), "MMM d 'at' h:mm a")}
+        {isAuthenticated ? (
+          <>Posted {format(new Date(truck.postedDate), "MMM d 'at' h:mm a")}</>
+        ) : (
+          <BlurredContent>
+            Posted {format(new Date(truck.postedDate), "MMM d 'at' h:mm a")}
+          </BlurredContent>
+        )}
       </CardFooter>
     </Card>
   );

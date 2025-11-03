@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import TruckCard from "@/components/TruckCard";
 import { Input } from "@/components/ui/input";
@@ -7,10 +7,25 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { mockTrucks } from "@/data/mockData";
+import { supabase } from "@/integrations/supabase/client";
+import { User } from "@supabase/supabase-js";
 
 const FindTrucks = () => {
   const [searchLocation, setSearchLocation] = useState("");
   const [equipmentFilter, setEquipmentFilter] = useState<string>("all");
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const filteredTrucks = mockTrucks.filter(truck => {
     const matchesLocation = !searchLocation || truck.location.toLowerCase().includes(searchLocation.toLowerCase());
@@ -80,7 +95,7 @@ const FindTrucks = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredTrucks.map((truck) => (
-            <TruckCard key={truck.id} truck={truck} />
+            <TruckCard key={truck.id} truck={truck} isAuthenticated={!!user} />
           ))}
         </div>
 
