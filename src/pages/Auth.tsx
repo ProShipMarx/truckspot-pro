@@ -116,6 +116,16 @@ const Auth = () => {
                       required
                     />
                   </div>
+                  <div className="text-right">
+                    <Button
+                      variant="link"
+                      className="p-0 h-auto text-sm"
+                      onClick={() => navigate("/forgot-password")}
+                      type="button"
+                    >
+                      Forgot password?
+                    </Button>
+                  </div>
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? "Logging in..." : "Login"}
                   </Button>

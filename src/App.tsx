@@ -12,6 +12,8 @@ import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import SignupCarrier from "./pages/SignupCarrier";
 import SignupShipper from "./pages/SignupShipper";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +28,8 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/signup-carrier" element={<SignupCarrier />} />
           <Route path="/signup-shipper" element={<SignupShipper />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/post-load" element={<PostLoad />} />
           <Route path="/post-truck" element={<PostTruck />} />
           <Route path="/find-loads" element={<FindLoads />} />
