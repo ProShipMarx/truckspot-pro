@@ -9,6 +9,30 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Package } from "lucide-react";
+import { z } from "zod";
+
+const loadFormSchema = z.object({
+  origin: z.string().trim().min(1, "Origin is required").max(100, "Origin must be less than 100 characters"),
+  destination: z.string().trim().min(1, "Destination is required").max(100, "Destination must be less than 100 characters"),
+  pickupDate: z.string().min(1, "Pickup date is required"),
+  weight: z.string().optional().refine((val) => !val || (!isNaN(Number(val)) && Number(val) > 0 && Number(val) <= 80000), {
+    message: "Weight must be a positive number up to 80,000 lbs"
+  }),
+  equipmentType: z.string().min(1, "Equipment type is required"),
+  rate: z.string().optional().refine((val) => !val || (!isNaN(Number(val)) && Number(val) > 0), {
+    message: "Rate must be a positive number"
+  }),
+  distance: z.string().optional().refine((val) => !val || (!isNaN(Number(val)) && Number(val) > 0 && Number(val) <= 10000), {
+    message: "Distance must be a positive number up to 10,000 miles"
+  }),
+  contactName: z.string().trim().max(100, "Name must be less than 100 characters").optional(),
+  contactPhone: z.string().trim().max(20, "Phone must be less than 20 characters").optional().refine((val) => !val || /^[\d\s\-\(\)\+]+$/.test(val), {
+    message: "Phone number contains invalid characters"
+  }),
+  contactEmail: z.string().trim().max(255, "Email must be less than 255 characters").optional().refine((val) => !val || z.string().email().safeParse(val).success, {
+    message: "Invalid email address"
+  }),
+});
 
 const PostLoad = () => {
   const navigate = useNavigate();
@@ -37,9 +61,12 @@ const PostLoad = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Basic validation
-    if (!formData.origin || !formData.destination || !formData.pickupDate || !formData.equipmentType) {
-      toast.error("Please fill in all required fields");
+    // Validate form data with zod schema
+    const validation = loadFormSchema.safeParse(formData);
+    
+    if (!validation.success) {
+      const firstError = validation.error.errors[0];
+      toast.error(firstError.message);
       return;
     }
     

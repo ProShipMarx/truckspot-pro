@@ -9,6 +9,23 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Truck } from "lucide-react";
+import { z } from "zod";
+
+const truckFormSchema = z.object({
+  location: z.string().trim().min(1, "Location is required").max(100, "Location must be less than 100 characters"),
+  equipmentType: z.string().min(1, "Equipment type is required"),
+  availableDate: z.string().min(1, "Available date is required"),
+  radius: z.string().optional().refine((val) => !val || (!isNaN(Number(val)) && Number(val) > 0 && Number(val) <= 3000), {
+    message: "Radius must be a positive number up to 3,000 miles"
+  }),
+  contactName: z.string().trim().max(100, "Name must be less than 100 characters").optional(),
+  contactPhone: z.string().trim().max(20, "Phone must be less than 20 characters").optional().refine((val) => !val || /^[\d\s\-\(\)\+]+$/.test(val), {
+    message: "Phone number contains invalid characters"
+  }),
+  contactEmail: z.string().trim().max(255, "Email must be less than 255 characters").optional().refine((val) => !val || z.string().email().safeParse(val).success, {
+    message: "Invalid email address"
+  }),
+});
 
 const PostTruck = () => {
   const navigate = useNavigate();
@@ -34,8 +51,12 @@ const PostTruck = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.location || !formData.equipmentType || !formData.availableDate) {
-      toast.error("Please fill in all required fields");
+    // Validate form data with zod schema
+    const validation = truckFormSchema.safeParse(formData);
+    
+    if (!validation.success) {
+      const firstError = validation.error.errors[0];
+      toast.error(firstError.message);
       return;
     }
     
