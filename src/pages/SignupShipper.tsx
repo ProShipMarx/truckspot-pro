@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Truck } from "lucide-react";
+import { validatePassword } from "@/lib/passwordValidation";
 
 const SignupShipper = () => {
   const navigate = useNavigate();
@@ -29,12 +30,15 @@ const SignupShipper = () => {
       return;
     }
 
-    if (signupData.password.length < 6) {
-      toast.error("Password must be at least 6 characters");
+    setLoading(true);
+
+    // Validate password strength and check for breaches
+    const validation = await validatePassword(signupData.password);
+    if (!validation.valid) {
+      toast.error(validation.error);
+      setLoading(false);
       return;
     }
-
-    setLoading(true);
 
     const { data, error } = await supabase.auth.signUp({
       email: signupData.email,
