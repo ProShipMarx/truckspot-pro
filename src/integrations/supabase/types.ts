@@ -55,7 +55,16 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      user_profiles_with_roles: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: string | null
+          updated_at: string | null
+          user_type: Database["public"]["Enums"]["app_role"] | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_user_role: {
