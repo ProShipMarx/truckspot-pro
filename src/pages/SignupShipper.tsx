@@ -41,6 +41,9 @@ const SignupShipper = () => {
       password: signupData.password,
       options: {
         emailRedirectTo: `${window.location.origin}/`,
+        data: {
+          role: "shipper"
+        }
       },
     });
 
@@ -51,17 +54,6 @@ const SignupShipper = () => {
     }
 
     if (data.user) {
-      // Insert shipper role
-      const { error: roleError } = await supabase
-        .from("user_roles")
-        .insert({ user_id: data.user.id, role: "shipper" });
-
-      if (roleError) {
-        toast.error("Failed to set user role");
-        setLoading(false);
-        return;
-      }
-
       toast.success("Shipper account created successfully!");
       navigate("/");
     }

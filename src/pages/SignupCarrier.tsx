@@ -41,6 +41,9 @@ const SignupCarrier = () => {
       password: signupData.password,
       options: {
         emailRedirectTo: `${window.location.origin}/`,
+        data: {
+          role: "carrier"
+        }
       },
     });
 
@@ -51,17 +54,6 @@ const SignupCarrier = () => {
     }
 
     if (data.user) {
-      // Insert carrier role
-      const { error: roleError } = await supabase
-        .from("user_roles")
-        .insert({ user_id: data.user.id, role: "carrier" });
-
-      if (roleError) {
-        toast.error("Failed to set user role");
-        setLoading(false);
-        return;
-      }
-
       toast.success("Carrier account created successfully!");
       navigate("/");
     }
