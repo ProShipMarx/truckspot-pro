@@ -19,52 +19,28 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          role: Database["public"]["Enums"]["app_role"]
           updated_at: string
         }
         Insert: {
           created_at?: string
           email: string
           id: string
+          role: Database["public"]["Enums"]["app_role"]
           updated_at?: string
         }
         Update: {
           created_at?: string
           email?: string
           id?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      user_roles: {
-        Row: {
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Insert: {
-          id?: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Update: {
-          id?: string
           role?: Database["public"]["Enums"]["app_role"]
-          user_id?: string
+          updated_at?: string
         }
         Relationships: []
       }
     }
     Views: {
-      user_profiles_with_roles: {
-        Row: {
-          created_at: string | null
-          email: string | null
-          id: string | null
-          updated_at: string | null
-          user_type: Database["public"]["Enums"]["app_role"] | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       get_user_role: {
