@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Truck, Package, LogOut } from "lucide-react";
+import { Truck, Package, LogOut, Shield } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -9,7 +9,7 @@ import { useApprovalStatus } from "@/hooks/useApprovalStatus";
 const Navigation = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useApprovalStatus();
+  const { user, userRole } = useApprovalStatus();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -58,6 +58,15 @@ const Navigation = () => {
             <Button asChild variant="secondary" size="sm">
               <Link to="/post-truck">Post Truck</Link>
             </Button>
+            
+            {userRole === "admin" && (
+              <Button asChild variant="outline" size="sm">
+                <Link to="/admin">
+                  <Shield className="h-4 w-4 mr-2" />
+                  Admin Panel
+                </Link>
+              </Button>
+            )}
             
             {user ? (
               <Button variant="ghost" onClick={handleLogout} size="sm">
