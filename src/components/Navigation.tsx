@@ -3,25 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Truck, Package, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
-import { User } from "@supabase/supabase-js";
 import { toast } from "sonner";
+import { useApprovalStatus } from "@/hooks/useApprovalStatus";
 
 const Navigation = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [user, setUser] = useState<User | null>(null);
-  
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  const { user } = useApprovalStatus();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();

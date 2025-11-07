@@ -58,8 +58,8 @@ const SignupCarrier = () => {
     }
 
     if (data.user) {
-      toast.success("Carrier account created successfully!");
-      navigate("/");
+      toast.success("Carrier account created successfully! Your account is pending approval.");
+      navigate("/pending-approval");
     }
     
     setLoading(false);

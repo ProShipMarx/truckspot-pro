@@ -14,6 +14,7 @@ import SignupCarrier from "./pages/SignupCarrier";
 import SignupShipper from "./pages/SignupShipper";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import PendingApproval from "./pages/PendingApproval";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/signup-carrier" element={<SignupCarrier />} />
           <Route path="/signup-shipper" element={<SignupShipper />} />
+          <Route path="/pending-approval" element={<PendingApproval />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/post-load" element={<PostLoad />} />
