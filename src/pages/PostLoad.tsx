@@ -10,6 +10,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { Package } from "lucide-react";
 import { z } from "zod";
+import { useGoogleMaps } from "@/hooks/useGoogleMaps";
+import { PlacesAutocomplete } from "@/components/PlacesAutocomplete";
+import { LoadMapWithRoute } from "@/components/LoadMapWithRoute";
 
 const loadFormSchema = z.object({
   origin: z.string().trim().min(1, "Origin is required").max(100, "Origin must be less than 100 characters"),
@@ -36,6 +39,7 @@ const loadFormSchema = z.object({
 
 const PostLoad = () => {
   const navigate = useNavigate();
+  const { isLoaded, loadError } = useGoogleMaps();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -58,6 +62,9 @@ const PostLoad = () => {
     contactEmail: "",
   });
 
+  const [originCoords, setOriginCoords] = useState<google.maps.LatLngLiteral | null>(null);
+  const [destinationCoords, setDestinationCoords] = useState<google.maps.LatLngLiteral | null>(null);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -77,6 +84,38 @@ const PostLoad = () => {
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
+
+  const handleOriginChange = (value: string, place: google.maps.places.PlaceResult | null) => {
+    setFormData(prev => ({ ...prev, origin: value }));
+    if (place?.geometry?.location) {
+      setOriginCoords({
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng(),
+      });
+    }
+  };
+
+  const handleDestinationChange = (value: string, place: google.maps.places.PlaceResult | null) => {
+    setFormData(prev => ({ ...prev, destination: value }));
+    if (place?.geometry?.location) {
+      setDestinationCoords({
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng(),
+      });
+    }
+  };
+
+  const handleDistanceCalculated = (distanceInMiles: number) => {
+    setFormData(prev => ({ ...prev, distance: distanceInMiles.toString() }));
+  };
+
+  if (loadError) {
+    return <div>Error loading maps</div>;
+  }
+
+  if (!isLoaded) {
+    return <div>Loading maps...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -105,22 +144,34 @@ const PostLoad = () => {
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="origin">Origin City, State *</Label>
-                  <Input
+                  <PlacesAutocomplete
                     id="origin"
-                    placeholder="e.g., Chicago, IL"
                     value={formData.origin}
-                    onChange={(e) => handleChange("origin", e.target.value)}
+                    onChange={handleOriginChange}
+                    placeholder="e.g., Chicago, IL"
                     required
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="destination">Destination City, State *</Label>
-                  <Input
+                  <PlacesAutocomplete
                     id="destination"
-                    placeholder="e.g., Dallas, TX"
                     value={formData.destination}
-                    onChange={(e) => handleChange("destination", e.target.value)}
+                    onChange={handleDestinationChange}
+                    placeholder="e.g., Dallas, TX"
                     required
+                  />
+                </div>
+              </div>
+
+              {/* Map Display */}
+              <div className="space-y-2">
+                <Label>Route Visualization</Label>
+                <div className="border rounded-lg overflow-hidden">
+                  <LoadMapWithRoute
+                    origin={originCoords}
+                    destination={destinationCoords}
+                    onDistanceCalculated={handleDistanceCalculated}
                   />
                 </div>
               </div>
