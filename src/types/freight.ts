@@ -1,7 +1,12 @@
 export interface Load {
   id: string;
+  user_id?: string;
   origin: string;
   destination: string;
+  origin_lat?: number;
+  origin_lng?: number;
+  destination_lat?: number;
+  destination_lng?: number;
   pickupDate: string;
   weight: number;
   equipmentType: string;

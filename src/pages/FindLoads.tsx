@@ -6,9 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, SlidersHorizontal } from "lucide-react";
-import { mockLoads } from "@/data/mockData";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
+import { useQuery } from "@tanstack/react-query";
+import { Load } from "@/types/freight";
 
 const FindLoads = () => {
   const [searchOrigin, setSearchOrigin] = useState("");
@@ -28,7 +29,39 @@ const FindLoads = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const filteredLoads = mockLoads.filter(load => {
+  const { data: loads = [], isLoading } = useQuery({
+    queryKey: ["loads"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("loads")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      return (data || []).map(load => ({
+        id: load.id,
+        user_id: load.user_id,
+        origin: load.origin,
+        destination: load.destination,
+        origin_lat: load.origin_lat,
+        origin_lng: load.origin_lng,
+        destination_lat: load.destination_lat,
+        destination_lng: load.destination_lng,
+        pickupDate: load.pickup_date,
+        weight: load.weight,
+        equipmentType: load.equipment_type,
+        rate: load.rate,
+        distance: load.distance,
+        contactName: load.contact_name,
+        contactPhone: load.contact_phone,
+        contactEmail: load.contact_email,
+        postedDate: load.created_at,
+      })) as Load[];
+    },
+  });
+
+  const filteredLoads = loads.filter(load => {
     const matchesOrigin = !searchOrigin || load.origin.toLowerCase().includes(searchOrigin.toLowerCase());
     const matchesDestination = !searchDestination || load.destination.toLowerCase().includes(searchDestination.toLowerCase());
     const matchesEquipment = equipmentFilter === "all" || load.equipmentType === equipmentFilter;
@@ -108,17 +141,25 @@ const FindLoads = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {filteredLoads.map((load) => (
-            <LoadCard key={load.id} load={load} isAuthenticated={!!user} />
-          ))}
-        </div>
-
-        {filteredLoads.length === 0 && (
+        {isLoading ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground text-lg">No loads match your search criteria</p>
-            <p className="text-muted-foreground mt-2">Try adjusting your filters</p>
+            <p className="text-muted-foreground text-lg">Loading loads...</p>
           </div>
+        ) : (
+          <>
+            <div className="grid md:grid-cols-2 gap-6">
+              {filteredLoads.map((load) => (
+                <LoadCard key={load.id} load={load} isAuthenticated={!!user} />
+              ))}
+            </div>
+
+            {filteredLoads.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground text-lg">No loads match your search criteria</p>
+                <p className="text-muted-foreground mt-2">Try adjusting your filters</p>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

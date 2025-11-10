@@ -65,7 +65,7 @@ const PostLoad = () => {
   const [originCoords, setOriginCoords] = useState<google.maps.LatLngLiteral | null>(null);
   const [destinationCoords, setDestinationCoords] = useState<google.maps.LatLngLiteral | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validate form data with zod schema
@@ -76,7 +76,39 @@ const PostLoad = () => {
       toast.error(firstError.message);
       return;
     }
+
+    const { data: { user } } = await supabase.auth.getUser();
     
+    if (!user) {
+      toast.error("You must be logged in to post a load");
+      navigate("/auth");
+      return;
+    }
+
+    const { error } = await supabase.from("loads").insert({
+      user_id: user.id,
+      origin: formData.origin,
+      destination: formData.destination,
+      origin_lat: originCoords?.lat,
+      origin_lng: originCoords?.lng,
+      destination_lat: destinationCoords?.lat,
+      destination_lng: destinationCoords?.lng,
+      pickup_date: formData.pickupDate,
+      weight: formData.weight ? parseFloat(formData.weight) : null,
+      equipment_type: formData.equipmentType,
+      rate: formData.rate ? parseFloat(formData.rate) : null,
+      distance: formData.distance ? parseFloat(formData.distance) : null,
+      contact_name: formData.contactName || null,
+      contact_phone: formData.contactPhone || null,
+      contact_email: formData.contactEmail || null,
+    });
+
+    if (error) {
+      console.error("Error posting load:", error);
+      toast.error("Failed to post load. Please try again.");
+      return;
+    }
+
     toast.success("Load posted successfully!");
     navigate("/find-loads");
   };

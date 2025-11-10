@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      loads: {
+        Row: {
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string
+          destination: string
+          destination_lat: number | null
+          destination_lng: number | null
+          distance: number | null
+          equipment_type: string
+          id: string
+          origin: string
+          origin_lat: number | null
+          origin_lng: number | null
+          pickup_date: string
+          rate: number | null
+          updated_at: string
+          user_id: string
+          weight: number | null
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          destination: string
+          destination_lat?: number | null
+          destination_lng?: number | null
+          distance?: number | null
+          equipment_type: string
+          id?: string
+          origin: string
+          origin_lat?: number | null
+          origin_lng?: number | null
+          pickup_date: string
+          rate?: number | null
+          updated_at?: string
+          user_id: string
+          weight?: number | null
+        }
+        Update: {
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          destination?: string
+          destination_lat?: number | null
+          destination_lng?: number | null
+          distance?: number | null
+          equipment_type?: string
+          id?: string
+          origin?: string
+          origin_lat?: number | null
+          origin_lng?: number | null
+          pickup_date?: string
+          rate?: number | null
+          updated_at?: string
+          user_id?: string
+          weight?: number | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
