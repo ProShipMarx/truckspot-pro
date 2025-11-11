@@ -7,17 +7,19 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, SlidersHorizontal } from "lucide-react";
-import { mockTrucks } from "@/data/mockData";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useApprovalStatus } from "@/hooks/useApprovalStatus";
 import { toast } from "sonner";
+import { Truck } from "@/types/freight";
 
 const FindTrucks = () => {
   const navigate = useNavigate();
   const [searchLocation, setSearchLocation] = useState("");
   const [equipmentFilter, setEquipmentFilter] = useState<string>("all");
   const [user, setUser] = useState<User | null>(null);
+  const [trucks, setTrucks] = useState<Truck[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { userRole, loading } = useApprovalStatus();
 
   useEffect(() => {
@@ -41,7 +43,30 @@ const FindTrucks = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const filteredTrucks = mockTrucks.filter(truck => {
+  useEffect(() => {
+    fetchTrucks();
+  }, []);
+
+  const fetchTrucks = async () => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await (supabase as any)
+        .from('trucks')
+        .select('*')
+        .is('deleted_at', null)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setTrucks(data || []);
+    } catch (error) {
+      console.error('Error fetching trucks:', error);
+      toast.error('Failed to load trucks');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const filteredTrucks = trucks.filter(truck => {
     const matchesLocation = !searchLocation || truck.location.toLowerCase().includes(searchLocation.toLowerCase());
     const matchesEquipment = equipmentFilter === "all" || truck.equipment_type === equipmentFilter;
     
@@ -103,21 +128,29 @@ const FindTrucks = () => {
         {/* Results */}
         <div className="mb-4 flex items-center justify-between">
           <p className="text-muted-foreground">
-            Showing {filteredTrucks.length} truck{filteredTrucks.length !== 1 ? 's' : ''}
+            {isLoading ? 'Loading...' : `Showing ${filteredTrucks.length} truck${filteredTrucks.length !== 1 ? 's' : ''}`}
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredTrucks.map((truck) => (
-            <TruckCard key={truck.id} truck={truck} isAuthenticated={!!user} />
-          ))}
-        </div>
-
-        {filteredTrucks.length === 0 && (
+        {isLoading ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground text-lg">No trucks match your search criteria</p>
-            <p className="text-muted-foreground mt-2">Try adjusting your filters</p>
+            <p className="text-muted-foreground text-lg">Loading trucks...</p>
           </div>
+        ) : (
+          <>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredTrucks.map((truck) => (
+                <TruckCard key={truck.id} truck={truck} isAuthenticated={!!user} />
+              ))}
+            </div>
+
+            {filteredTrucks.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground text-lg">No trucks match your search criteria</p>
+                <p className="text-muted-foreground mt-2">Try adjusting your filters</p>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
