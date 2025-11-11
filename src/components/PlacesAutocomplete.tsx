@@ -25,11 +25,14 @@ export const PlacesAutocomplete = ({
     autocompleteRef.current = new google.maps.places.Autocomplete(inputRef.current, {
       types: ["(cities)"],
       componentRestrictions: { country: "us" },
+      fields: ["formatted_address", "geometry", "address_components", "place_id"],
     });
 
     autocompleteRef.current.addListener("place_changed", () => {
       const place = autocompleteRef.current?.getPlace();
       if (place?.formatted_address) {
+        // Update the visible input immediately to avoid double-selection feeling
+        if (inputRef.current) inputRef.current.value = place.formatted_address;
         onChange(place.formatted_address, place);
       }
     });
@@ -39,7 +42,7 @@ export const PlacesAutocomplete = ({
         google.maps.event.clearInstanceListeners(autocompleteRef.current);
       }
     };
-  }, [onChange]);
+  }, []);
 
   return (
     <Input
