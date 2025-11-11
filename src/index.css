@@ -123,4 +123,28 @@ All colors MUST be HSL.
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
   }
+  
+  /* Google Places Autocomplete dropdown fix */
+  .pac-container {
+    z-index: 9999 !important;
+    background-color: hsl(var(--popover));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-elevated);
+  }
+  
+  .pac-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    color: hsl(var(--popover-foreground));
+  }
+  
+  .pac-item:hover {
+    background-color: hsl(var(--accent));
+  }
+  
+  .pac-item-query {
+    color: hsl(var(--foreground));
+    font-weight: 500;
+  }
 }
