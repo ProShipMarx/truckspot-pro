@@ -17,6 +17,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import PendingApproval from "./pages/PendingApproval";
 import Admin from "./pages/Admin";
+import MyAccount from "./pages/MyAccount";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,7 @@ const App = () => (
           <Route path="/loads/:id" element={<LoadDetail />} />
           <Route path="/find-trucks" element={<FindTrucks />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/my-account" element={<MyAccount />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

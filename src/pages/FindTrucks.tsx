@@ -29,7 +29,7 @@ const FindTrucks = () => {
 
   const filteredTrucks = mockTrucks.filter(truck => {
     const matchesLocation = !searchLocation || truck.location.toLowerCase().includes(searchLocation.toLowerCase());
-    const matchesEquipment = equipmentFilter === "all" || truck.equipmentType === equipmentFilter;
+    const matchesEquipment = equipmentFilter === "all" || truck.equipment_type === equipmentFilter;
     
     return matchesLocation && matchesEquipment;
   });

@@ -48,7 +48,7 @@ const PostTruck = () => {
     contactEmail: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validate form data with zod schema
@@ -59,9 +59,37 @@ const PostTruck = () => {
       toast.error(firstError.message);
       return;
     }
-    
-    toast.success("Truck posted successfully!");
-    navigate("/find-trucks");
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error("You must be logged in to post a truck");
+        navigate("/auth");
+        return;
+      }
+
+      // @ts-ignore - Supabase types will regenerate after migration  
+      const { error } = await (supabase as any)
+        .from('trucks')
+        .insert({
+          user_id: session.user.id,
+          location: formData.location,
+          equipment_type: formData.equipmentType,
+          available_date: formData.availableDate,
+          radius: formData.radius ? Number(formData.radius) : null,
+          contact_name: formData.contactName || null,
+          contact_phone: formData.contactPhone || null,
+          contact_email: formData.contactEmail || null,
+        });
+
+      if (error) throw error;
+
+      toast.success("Truck posted successfully!");
+      navigate("/find-trucks");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to post truck");
+    }
   };
 
   const handleChange = (field: string, value: string) => {

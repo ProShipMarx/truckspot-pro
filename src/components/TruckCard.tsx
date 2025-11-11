@@ -41,15 +41,15 @@ const TruckCard = ({ truck, isAuthenticated }: TruckCardProps) => {
         <div className="grid grid-cols-1 gap-3 text-sm">
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span>Available {format(new Date(truck.availableDate), "MMM d, yyyy")}</span>
+            <span>Available {format(new Date(truck.available_date), "MMM d, yyyy")}</span>
           </div>
           <div className="flex items-center gap-2">
             <Truck className="h-4 w-4 text-muted-foreground" />
             {isAuthenticated ? (
-              <Badge variant="secondary">{truck.equipmentType}</Badge>
+              <Badge variant="secondary">{truck.equipment_type}</Badge>
             ) : (
               <BlurredContent>
-                <Badge variant="secondary">{truck.equipmentType}</Badge>
+                <Badge variant="secondary">{truck.equipment_type}</Badge>
               </BlurredContent>
             )}
           </div>
@@ -59,16 +59,16 @@ const TruckCard = ({ truck, isAuthenticated }: TruckCardProps) => {
           <div className="pt-3 border-t space-y-1.5">
             <div className="flex items-center gap-2 text-sm">
               <Phone className="h-4 w-4 text-muted-foreground" />
-              <span className="font-medium">{truck.contactName}</span>
+              <span className="font-medium">{truck.contact_name}</span>
               <span className="text-muted-foreground">•</span>
-              <a href={`tel:${truck.contactPhone}`} className="text-primary hover:underline">
-                {truck.contactPhone}
+              <a href={`tel:${truck.contact_phone}`} className="text-primary hover:underline">
+                {truck.contact_phone}
               </a>
             </div>
             <div className="flex items-center gap-2 text-sm">
               <Mail className="h-4 w-4 text-muted-foreground" />
-              <a href={`mailto:${truck.contactEmail}`} className="text-primary hover:underline">
-                {truck.contactEmail}
+              <a href={`mailto:${truck.contact_email}`} className="text-primary hover:underline">
+                {truck.contact_email}
               </a>
             </div>
           </div>
@@ -78,13 +78,13 @@ const TruckCard = ({ truck, isAuthenticated }: TruckCardProps) => {
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2 text-sm">
                   <Phone className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">{truck.contactName}</span>
+                  <span className="font-medium">{truck.contact_name}</span>
                   <span className="text-muted-foreground">•</span>
-                  <span>{truck.contactPhone}</span>
+                  <span>{truck.contact_phone}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <Mail className="h-4 w-4 text-muted-foreground" />
-                  <span>{truck.contactEmail}</span>
+                  <span>{truck.contact_email}</span>
                 </div>
               </div>
             </BlurredContent>
@@ -101,10 +101,10 @@ const TruckCard = ({ truck, isAuthenticated }: TruckCardProps) => {
       
       <CardFooter className="pt-0 text-xs text-muted-foreground">
         {isAuthenticated ? (
-          <>Posted {format(new Date(truck.postedDate), "MMM d 'at' h:mm a")}</>
+          <>Posted {format(new Date(truck.created_at), "MMM d 'at' h:mm a")}</>
         ) : (
           <BlurredContent>
-            Posted {format(new Date(truck.postedDate), "MMM d 'at' h:mm a")}
+            Posted {format(new Date(truck.created_at), "MMM d 'at' h:mm a")}
           </BlurredContent>
         )}
       </CardFooter>
