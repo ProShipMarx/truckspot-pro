@@ -23,7 +23,7 @@ const Navigation = () => {
           </Link>
           
           <div className="hidden md:flex items-center gap-1">
-            {userRole === "carrier" && (
+            {(userRole === "carrier" || userRole === "admin") && (
               <Button 
                 asChild 
                 variant={isActive("/find-loads") ? "default" : "ghost"}
@@ -35,7 +35,7 @@ const Navigation = () => {
                 </Link>
               </Button>
             )}
-            {userRole === "shipper" && (
+            {(userRole === "shipper" || userRole === "admin") && (
               <Button 
                 asChild 
                 variant={isActive("/find-trucks") ? "default" : "ghost"}
@@ -50,12 +50,12 @@ const Navigation = () => {
           </div>
           
           <div className="flex items-center gap-2">
-            {userRole === "shipper" && (
+            {(userRole === "shipper" || userRole === "admin") && (
               <Button asChild variant="outline" size="sm">
                 <Link to="/post-load">Post Load</Link>
               </Button>
             )}
-            {userRole === "carrier" && (
+            {(userRole === "carrier" || userRole === "admin") && (
               <Button asChild variant="secondary" size="sm">
                 <Link to="/post-truck">Post Truck</Link>
               </Button>

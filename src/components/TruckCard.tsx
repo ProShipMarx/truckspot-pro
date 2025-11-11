@@ -1,17 +1,26 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Calendar, Truck, Phone, Mail, Radio, Lock } from "lucide-react";
+import { MapPin, Calendar, Truck, Phone, Mail, Radio, Lock, Trash2 } from "lucide-react";
 import { Truck as TruckType } from "@/types/freight";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface TruckCardProps {
   truck: TruckType;
   isAuthenticated: boolean;
+  userRole?: string | null;
+  onDelete?: () => void;
 }
 
-const TruckCard = ({ truck, isAuthenticated }: TruckCardProps) => {
+const TruckCard = ({ truck, isAuthenticated, userRole, onDelete }: TruckCardProps) => {
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const BlurredContent = ({ children }: { children: React.ReactNode }) => (
     <div className="relative">
       <div className="blur-sm select-none">{children}</div>
@@ -20,8 +29,45 @@ const TruckCard = ({ truck, isAuthenticated }: TruckCardProps) => {
       </div>
     </div>
   );
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const { error } = await (supabase as any)
+        .from('trucks')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', truck.id);
+
+      if (error) throw error;
+
+      toast.success("Truck deleted successfully");
+      setShowDeleteDialog(false);
+      onDelete?.();
+    } catch (error) {
+      console.error('Error deleting truck:', error);
+      toast.error('Failed to delete truck');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
-    <Card className="hover:shadow-lg transition-all duration-200">
+    <>
+      <Card className="hover:shadow-lg transition-all duration-200 relative">
+        {userRole === "admin" && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-2 right-2 z-10 h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setShowDeleteDialog(true);
+            }}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        )}
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -108,7 +154,16 @@ const TruckCard = ({ truck, isAuthenticated }: TruckCardProps) => {
           </BlurredContent>
         )}
       </CardFooter>
-    </Card>
+      </Card>
+
+      <DeleteConfirmDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        onConfirm={handleDelete}
+        title="Delete Truck"
+        description="Are you sure you want to delete this truck? This action cannot be undone."
+      />
+    </>
   );
 };
 

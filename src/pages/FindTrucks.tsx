@@ -24,7 +24,7 @@ const FindTrucks = () => {
 
   useEffect(() => {
     if (!loading) {
-      if (userRole !== "shipper") {
+      if (userRole !== "shipper" && userRole !== "admin") {
         toast.error("Only shippers can view trucks");
         navigate("/");
       }
@@ -140,7 +140,13 @@ const FindTrucks = () => {
           <>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredTrucks.map((truck) => (
-                <TruckCard key={truck.id} truck={truck} isAuthenticated={!!user} />
+                <TruckCard 
+                  key={truck.id} 
+                  truck={truck} 
+                  isAuthenticated={!!user} 
+                  userRole={userRole}
+                  onDelete={fetchTrucks}
+                />
               ))}
             </div>
 

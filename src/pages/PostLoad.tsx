@@ -45,7 +45,7 @@ const PostLoad = () => {
 
   useEffect(() => {
     if (!loading) {
-      if (userRole !== "shipper") {
+      if (userRole !== "shipper" && userRole !== "admin") {
         toast.error("Only shippers can post loads");
         navigate("/");
       }

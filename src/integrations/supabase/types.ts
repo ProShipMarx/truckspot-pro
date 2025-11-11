@@ -20,6 +20,7 @@ export type Database = {
           contact_name: string | null
           contact_phone: string | null
           created_at: string
+          deleted_at: string | null
           destination: string
           destination_lat: number | null
           destination_lng: number | null
@@ -40,6 +41,7 @@ export type Database = {
           contact_name?: string | null
           contact_phone?: string | null
           created_at?: string
+          deleted_at?: string | null
           destination: string
           destination_lat?: number | null
           destination_lng?: number | null
@@ -60,6 +62,7 @@ export type Database = {
           contact_name?: string | null
           contact_phone?: string | null
           created_at?: string
+          deleted_at?: string | null
           destination?: string
           destination_lat?: number | null
           destination_lng?: number | null
@@ -101,6 +104,51 @@ export type Database = {
         }
         Relationships: []
       }
+      trucks: {
+        Row: {
+          available_date: string
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string | null
+          deleted_at: string | null
+          equipment_type: string
+          id: string
+          location: string
+          radius: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          available_date: string
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          deleted_at?: string | null
+          equipment_type: string
+          id?: string
+          location: string
+          radius?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          available_date?: string
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          deleted_at?: string | null
+          equipment_type?: string
+          id?: string
+          location?: string
+          radius?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -127,6 +175,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_soft_deleted_records: { Args: never; Returns: undefined }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]

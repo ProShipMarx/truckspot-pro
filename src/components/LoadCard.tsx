@@ -1,17 +1,26 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Calendar, Weight, Truck, DollarSign, Phone, Mail, Lock } from "lucide-react";
+import { MapPin, Calendar, Weight, Truck, DollarSign, Phone, Mail, Lock, Trash2 } from "lucide-react";
 import { Load } from "@/types/freight";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface LoadCardProps {
   load: Load;
   isAuthenticated: boolean;
+  userRole?: string | null;
+  onDelete?: () => void;
 }
 
-const LoadCard = ({ load, isAuthenticated }: LoadCardProps) => {
+const LoadCard = ({ load, isAuthenticated, userRole, onDelete }: LoadCardProps) => {
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const BlurredContent = ({ children }: { children: React.ReactNode }) => (
     <div className="relative">
       <div className="blur-sm select-none">{children}</div>
@@ -21,14 +30,50 @@ const LoadCard = ({ load, isAuthenticated }: LoadCardProps) => {
     </div>
   );
 
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const { error } = await (supabase as any)
+        .from('loads')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', load.id);
+
+      if (error) throw error;
+
+      toast.success("Load deleted successfully");
+      setShowDeleteDialog(false);
+      onDelete?.();
+    } catch (error) {
+      console.error('Error deleting load:', error);
+      toast.error('Failed to delete load');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const ratePerMile = load.rate && load.distance ? (load.rate / load.distance).toFixed(2) : null;
 
   return (
-    <Link to={`/loads/${load.id}`} className="block">
-      <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
+    <>
+      <Link to={`/loads/${load.id}`} className="block">
+        <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer relative">
+          {userRole === "admin" && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-2 right-2 z-10 h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowDeleteDialog(true);
+              }}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
+          <CardHeader className="pb-3">
+            <div className="flex items-start justify-between">
+              <div className="flex-1 pr-10">
               <div className="flex items-center gap-2 mb-2">
                 <MapPin className="h-4 w-4 text-primary" />
                 <span className="font-semibold text-foreground">{load.origin}</span>
@@ -151,8 +196,17 @@ const LoadCard = ({ load, isAuthenticated }: LoadCardProps) => {
             </BlurredContent>
           )}
         </CardFooter>
-      </Card>
-    </Link>
+        </Card>
+      </Link>
+
+      <DeleteConfirmDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        onConfirm={handleDelete}
+        title="Delete Load"
+        description="Are you sure you want to delete this load? This action cannot be undone."
+      />
+    </>
   );
 };
 

@@ -24,7 +24,7 @@ const FindLoads = () => {
 
   useEffect(() => {
     if (!loading) {
-      if (userRole !== "carrier") {
+      if (userRole !== "carrier" && userRole !== "admin") {
         toast.error("Only carriers can view loads");
         navigate("/");
       }
@@ -43,7 +43,7 @@ const FindLoads = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const { data: loads = [], isLoading } = useQuery({
+  const { data: loads = [], isLoading, refetch } = useQuery({
     queryKey: ["loads"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -163,7 +163,13 @@ const FindLoads = () => {
           <>
             <div className="grid md:grid-cols-2 gap-6">
               {filteredLoads.map((load) => (
-                <LoadCard key={load.id} load={load} isAuthenticated={!!user} />
+                <LoadCard 
+                  key={load.id} 
+                  load={load} 
+                  isAuthenticated={!!user} 
+                  userRole={userRole}
+                  onDelete={refetch}
+                />
               ))}
             </div>
 

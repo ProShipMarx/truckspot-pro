@@ -34,7 +34,7 @@ const PostTruck = () => {
 
   useEffect(() => {
     if (!loading) {
-      if (userRole !== "carrier") {
+      if (userRole !== "carrier" && userRole !== "admin") {
         toast.error("Only carriers can post trucks");
         navigate("/");
       }
