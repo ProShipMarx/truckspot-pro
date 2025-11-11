@@ -46,9 +46,10 @@ export const PlacesAutocomplete = ({
       ref={inputRef}
       id={id}
       placeholder={placeholder}
-      value={value}
+      defaultValue={value}
       onChange={(e) => onChange(e.target.value, null)}
       required={required}
+      autoComplete="off"
     />
   );
 };
