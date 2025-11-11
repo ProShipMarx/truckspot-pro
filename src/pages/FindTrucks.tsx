@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import TruckCard from "@/components/TruckCard";
 import { Input } from "@/components/ui/input";
@@ -9,11 +10,24 @@ import { Search, SlidersHorizontal } from "lucide-react";
 import { mockTrucks } from "@/data/mockData";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
+import { useApprovalStatus } from "@/hooks/useApprovalStatus";
+import { toast } from "sonner";
 
 const FindTrucks = () => {
+  const navigate = useNavigate();
   const [searchLocation, setSearchLocation] = useState("");
   const [equipmentFilter, setEquipmentFilter] = useState<string>("all");
   const [user, setUser] = useState<User | null>(null);
+  const { userRole, loading } = useApprovalStatus();
+
+  useEffect(() => {
+    if (!loading) {
+      if (userRole !== "shipper") {
+        toast.error("Only shippers can view trucks");
+        navigate("/");
+      }
+    }
+  }, [navigate, userRole, loading]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {

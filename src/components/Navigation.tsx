@@ -23,35 +23,43 @@ const Navigation = () => {
           </Link>
           
           <div className="hidden md:flex items-center gap-1">
-            <Button 
-              asChild 
-              variant={isActive("/find-loads") ? "default" : "ghost"}
-              size="sm"
-            >
-              <Link to="/find-loads">
-                <Package className="h-4 w-4" />
-                Find Loads
-              </Link>
-            </Button>
-            <Button 
-              asChild 
-              variant={isActive("/find-trucks") ? "default" : "ghost"}
-              size="sm"
-            >
-              <Link to="/find-trucks">
-                <Truck className="h-4 w-4" />
-                Find Trucks
-              </Link>
-            </Button>
+            {userRole === "carrier" && (
+              <Button 
+                asChild 
+                variant={isActive("/find-loads") ? "default" : "ghost"}
+                size="sm"
+              >
+                <Link to="/find-loads">
+                  <Package className="h-4 w-4" />
+                  Find Loads
+                </Link>
+              </Button>
+            )}
+            {userRole === "shipper" && (
+              <Button 
+                asChild 
+                variant={isActive("/find-trucks") ? "default" : "ghost"}
+                size="sm"
+              >
+                <Link to="/find-trucks">
+                  <Truck className="h-4 w-4" />
+                  Find Trucks
+                </Link>
+              </Button>
+            )}
           </div>
           
           <div className="flex items-center gap-2">
-            <Button asChild variant="outline" size="sm">
-              <Link to="/post-load">Post Load</Link>
-            </Button>
-            <Button asChild variant="secondary" size="sm">
-              <Link to="/post-truck">Post Truck</Link>
-            </Button>
+            {userRole === "shipper" && (
+              <Button asChild variant="outline" size="sm">
+                <Link to="/post-load">Post Load</Link>
+              </Button>
+            )}
+            {userRole === "carrier" && (
+              <Button asChild variant="secondary" size="sm">
+                <Link to="/post-truck">Post Truck</Link>
+              </Button>
+            )}
             
             {userRole === "admin" && (
               <Button asChild variant="outline" size="sm">

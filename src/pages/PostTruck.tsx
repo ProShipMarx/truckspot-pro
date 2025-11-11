@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import { supabase } from "@/integrations/supabase/client";
+import { useApprovalStatus } from "@/hooks/useApprovalStatus";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,14 +30,16 @@ const truckFormSchema = z.object({
 
 const PostTruck = () => {
   const navigate = useNavigate();
+  const { userRole, loading } = useApprovalStatus();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        navigate("/auth");
+    if (!loading) {
+      if (userRole !== "carrier") {
+        toast.error("Only carriers can post trucks");
+        navigate("/");
       }
-    });
-  }, [navigate]);
+    }
+  }, [navigate, userRole, loading]);
 
   const [formData, setFormData] = useState({
     location: "",
