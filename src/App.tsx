@@ -8,6 +8,7 @@ import PostLoad from "./pages/PostLoad";
 import PostTruck from "./pages/PostTruck";
 import FindLoads from "./pages/FindLoads";
 import FindTrucks from "./pages/FindTrucks";
+import LoadDetail from "./pages/LoadDetail";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import SignupCarrier from "./pages/SignupCarrier";
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/post-load" element={<PostLoad />} />
           <Route path="/post-truck" element={<PostTruck />} />
           <Route path="/find-loads" element={<FindLoads />} />
+          <Route path="/loads/:id" element={<LoadDetail />} />
           <Route path="/find-trucks" element={<FindTrucks />} />
           <Route path="/admin" element={<Admin />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

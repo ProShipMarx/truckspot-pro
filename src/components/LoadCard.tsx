@@ -21,43 +21,50 @@ const LoadCard = ({ load, isAuthenticated }: LoadCardProps) => {
     </div>
   );
 
+  const ratePerMile = load.rate && load.distance ? (load.rate / load.distance).toFixed(2) : null;
+
   return (
-    <Card className="hover:shadow-lg transition-all duration-200">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
-              <MapPin className="h-4 w-4 text-primary" />
-              <span className="font-semibold text-foreground">{load.origin}</span>
-              <span className="text-muted-foreground">→</span>
-              <span className="font-semibold text-foreground">{load.destination}</span>
+    <Link to={`/loads/${load.id}`} className="block">
+      <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer">
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <MapPin className="h-4 w-4 text-primary" />
+                <span className="font-semibold text-foreground">{load.origin}</span>
+                <span className="text-muted-foreground">→</span>
+                <span className="font-semibold text-foreground">{load.destination}</span>
+              </div>
+              <div className="text-sm text-muted-foreground">
+                {load.distance ? `${load.distance} miles` : 'Distance not available'}
+              </div>
             </div>
-            <div className="text-sm text-muted-foreground">
-              {load.distance} miles
+            <div className="text-right">
+              {isAuthenticated ? (
+                <>
+                  <div className="text-2xl font-bold text-secondary">
+                    ${load.rate?.toLocaleString() || 'N/A'}
+                  </div>
+                  {ratePerMile && (
+                    <div className="text-xs text-muted-foreground">
+                      ${ratePerMile}/mi
+                    </div>
+                  )}
+                </>
+              ) : (
+                <BlurredContent>
+                  <div className="text-2xl font-bold text-secondary">
+                    ${load.rate?.toLocaleString() || 'N/A'}
+                  </div>
+                  {ratePerMile && (
+                    <div className="text-xs text-muted-foreground">
+                      ${ratePerMile}/mi
+                    </div>
+                  )}
+                </BlurredContent>
+              )}
             </div>
           </div>
-          <div className="text-right">
-            {isAuthenticated ? (
-              <>
-                <div className="text-2xl font-bold text-secondary">
-                  ${load.rate.toLocaleString()}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  ${(load.rate / load.distance).toFixed(2)}/mi
-                </div>
-              </>
-            ) : (
-              <BlurredContent>
-                <div className="text-2xl font-bold text-secondary">
-                  ${load.rate.toLocaleString()}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  ${(load.rate / load.distance).toFixed(2)}/mi
-                </div>
-              </BlurredContent>
-            )}
-          </div>
-        </div>
       </CardHeader>
       
       <CardContent className="space-y-3">
@@ -109,7 +116,7 @@ const LoadCard = ({ load, isAuthenticated }: LoadCardProps) => {
             </div>
           </div>
         ) : (
-          <div className="pt-3 border-t">
+          <div className="pt-3 border-t" onClick={(e) => e.preventDefault()}>
             <BlurredContent>
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2 text-sm">
@@ -125,7 +132,7 @@ const LoadCard = ({ load, isAuthenticated }: LoadCardProps) => {
               </div>
             </BlurredContent>
             <div className="mt-2 text-center">
-              <Link to="/auth">
+              <Link to="/auth" onClick={(e) => e.stopPropagation()}>
                 <Button variant="outline" size="sm" className="w-full">
                   Login to View Details
                 </Button>
@@ -135,16 +142,17 @@ const LoadCard = ({ load, isAuthenticated }: LoadCardProps) => {
         )}
       </CardContent>
       
-      <CardFooter className="pt-0 text-xs text-muted-foreground">
-        {isAuthenticated ? (
-          <>Posted {format(new Date(load.postedDate), "MMM d 'at' h:mm a")}</>
-        ) : (
-          <BlurredContent>
-            Posted {format(new Date(load.postedDate), "MMM d 'at' h:mm a")}
-          </BlurredContent>
-        )}
-      </CardFooter>
-    </Card>
+        <CardFooter className="pt-0 text-xs text-muted-foreground">
+          {isAuthenticated ? (
+            <>Posted {format(new Date(load.postedDate), "MMM d 'at' h:mm a")}</>
+          ) : (
+            <BlurredContent>
+              Posted {format(new Date(load.postedDate), "MMM d 'at' h:mm a")}
+            </BlurredContent>
+          )}
+        </CardFooter>
+      </Card>
+    </Link>
   );
 };
 

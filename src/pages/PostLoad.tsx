@@ -234,9 +234,10 @@ const PostLoad = () => {
                   <Input
                     id="distance"
                     type="number"
-                    placeholder="850"
+                    placeholder="Calculated from map"
                     value={formData.distance}
-                    onChange={(e) => handleChange("distance", e.target.value)}
+                    readOnly
+                    className="bg-muted"
                   />
                 </div>
               </div>
