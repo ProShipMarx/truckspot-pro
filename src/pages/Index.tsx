@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Package, Truck, Search, Phone, CheckCircle2 } from "lucide-react";
+import { Package, Truck, Search, Phone, CheckCircle2, ArrowRight } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import heroImage from "@/assets/hero-freight.jpg";
 import { useApprovalStatus } from "@/hooks/useApprovalStatus";
@@ -59,8 +59,8 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <Card className="text-center">
+          <div className="flex items-center justify-center gap-4 max-w-6xl mx-auto">
+            <Card className="text-center flex-1">
               <CardHeader>
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Package className="h-8 w-8 text-primary" />
@@ -72,7 +72,9 @@ const Index = () => {
               </CardHeader>
             </Card>
             
-            <Card className="text-center">
+            <ArrowRight className="hidden md:block h-8 w-8 text-primary flex-shrink-0" />
+            
+            <Card className="text-center flex-1">
               <CardHeader>
                 <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Search className="h-8 w-8 text-secondary" />
@@ -84,7 +86,9 @@ const Index = () => {
               </CardHeader>
             </Card>
             
-            <Card className="text-center">
+            <ArrowRight className="hidden md:block h-8 w-8 text-primary flex-shrink-0" />
+            
+            <Card className="text-center flex-1">
               <CardHeader>
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Phone className="h-8 w-8 text-primary" />
