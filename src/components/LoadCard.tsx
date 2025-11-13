@@ -33,19 +33,39 @@ const LoadCard = ({ load, isAuthenticated, userRole, onDelete }: LoadCardProps) 
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      const { error } = await (supabase as any)
-        .from('loads')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', load.id);
+      if (userRole === 'admin') {
+        // Admin users: call edge function to bypass RLS
+        const { data, error } = await supabase.functions.invoke('admin-soft-delete', {
+          body: { type: 'load', id: load.id }
+        });
 
-      if (error) throw error;
+        if (error) {
+          console.error('Error deleting load:', error);
+          throw new Error(error.message || 'Failed to delete load');
+        }
+
+        if (!data?.success) {
+          throw new Error(data?.error || 'Failed to delete load');
+        }
+      } else {
+        // Regular users: direct table update
+        const { error } = await (supabase as any)
+          .from('loads')
+          .update({ deleted_at: new Date().toISOString() })
+          .eq('id', load.id);
+
+        if (error) {
+          console.error('Error deleting load:', error);
+          throw new Error(error.message || 'Failed to delete load');
+        }
+      }
 
       toast.success("Load deleted successfully");
       setShowDeleteDialog(false);
       onDelete?.();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting load:', error);
-      toast.error('Failed to delete load');
+      toast.error(error?.message || 'Failed to delete load');
     } finally {
       setIsDeleting(false);
     }

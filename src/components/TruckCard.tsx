@@ -33,19 +33,39 @@ const TruckCard = ({ truck, isAuthenticated, userRole, onDelete }: TruckCardProp
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      const { error } = await (supabase as any)
-        .from('trucks')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', truck.id);
+      if (userRole === 'admin') {
+        // Admin users: call edge function to bypass RLS
+        const { data, error } = await supabase.functions.invoke('admin-soft-delete', {
+          body: { type: 'truck', id: truck.id }
+        });
 
-      if (error) throw error;
+        if (error) {
+          console.error('Error deleting truck:', error);
+          throw new Error(error.message || 'Failed to delete truck');
+        }
+
+        if (!data?.success) {
+          throw new Error(data?.error || 'Failed to delete truck');
+        }
+      } else {
+        // Regular users: direct table update
+        const { error } = await (supabase as any)
+          .from('trucks')
+          .update({ deleted_at: new Date().toISOString() })
+          .eq('id', truck.id);
+
+        if (error) {
+          console.error('Error deleting truck:', error);
+          throw new Error(error.message || 'Failed to delete truck');
+        }
+      }
 
       toast.success("Truck deleted successfully");
       setShowDeleteDialog(false);
       onDelete?.();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting truck:', error);
-      toast.error('Failed to delete truck');
+      toast.error(error?.message || 'Failed to delete truck');
     } finally {
       setIsDeleting(false);
     }
