@@ -4,8 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Package, Truck, Search, Phone, CheckCircle2 } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import heroImage from "@/assets/hero-freight.jpg";
+import { useApprovalStatus } from "@/hooks/useApprovalStatus";
 
 const Index = () => {
+  const { user } = useApprovalStatus();
+  const getRoute = (targetRoute: string) => user ? targetRoute : "/auth";
+  
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -29,13 +33,13 @@ const Index = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild size="lg" variant="secondary" className="text-lg h-12">
-                <Link to="/find-loads">
+                <Link to={getRoute("/find-loads")}>
                   <Package className="h-5 w-5" />
                   Find Loads
                 </Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="text-lg h-12 bg-primary-foreground/10 backdrop-blur-sm border-primary-foreground/20 hover:bg-primary-foreground/20">
-                <Link to="/find-trucks">
+                <Link to={getRoute("/find-trucks")}>
                   <Truck className="h-5 w-5" />
                   Find Trucks
                 </Link>
@@ -120,10 +124,10 @@ const Index = () => {
               </ul>
               <div className="flex gap-4">
                 <Button asChild size="lg">
-                  <Link to="/find-loads">Browse Loads</Link>
+                  <Link to={getRoute("/find-loads")}>Browse Loads</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline">
-                  <Link to="/post-truck">Post Your Truck</Link>
+                  <Link to={getRoute("/post-truck")}>Post Your Truck</Link>
                 </Button>
               </div>
             </div>
@@ -168,10 +172,10 @@ const Index = () => {
               </ul>
               <div className="flex gap-4">
                 <Button asChild size="lg" variant="secondary">
-                  <Link to="/post-load">Post a Load</Link>
+                  <Link to={getRoute("/post-load")}>Post a Load</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline">
-                  <Link to="/find-trucks">Find Trucks</Link>
+                  <Link to={getRoute("/find-trucks")}>Find Trucks</Link>
                 </Button>
               </div>
             </div>
@@ -188,10 +192,10 @@ const Index = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" variant="secondary">
-              <Link to="/post-load">Post a Load</Link>
+              <Link to={getRoute("/post-load")}>Post a Load</Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="bg-primary-foreground/10 backdrop-blur-sm border-primary-foreground/20 hover:bg-primary-foreground/20">
-              <Link to="/post-truck">Post a Truck</Link>
+              <Link to={getRoute("/post-truck")}>Post a Truck</Link>
             </Button>
           </div>
         </div>
