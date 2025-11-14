@@ -62,12 +62,19 @@ const Navigation = () => {
             )}
             
             {userRole === "admin" && (
-              <Button asChild variant="outline" size="sm">
-                <Link to="/admin">
-                  <Shield className="h-4 w-4 mr-2" />
-                  Admin Panel
-                </Link>
-              </Button>
+              <>
+                <Button asChild variant="outline" size="sm">
+                  <Link to="/admin/dashboard">
+                    <Shield className="h-4 w-4 mr-2" />
+                    Dashboard
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="sm">
+                  <Link to="/admin">
+                    Admin Panel
+                  </Link>
+                </Button>
+              </>
             )}
             
             {user ? (
