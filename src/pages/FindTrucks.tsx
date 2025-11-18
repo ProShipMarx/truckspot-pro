@@ -145,6 +145,7 @@ const FindTrucks = () => {
                   truck={truck} 
                   isAuthenticated={!!user} 
                   userRole={userRole}
+                  currentUserId={user?.id}
                   onDelete={fetchTrucks}
                 />
               ))}

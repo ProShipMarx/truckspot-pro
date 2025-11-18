@@ -168,6 +168,7 @@ const FindLoads = () => {
                   load={load} 
                   isAuthenticated={!!user} 
                   userRole={userRole}
+                  currentUserId={user?.id}
                   onDelete={refetch}
                 />
               ))}
