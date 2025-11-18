@@ -1,7 +1,7 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Calendar, Truck, Phone, Mail, Radio, Lock, Trash2 } from "lucide-react";
+import { MapPin, Calendar, Truck, Phone, Mail, Radio, Lock, Trash2, MessageSquare } from "lucide-react";
 import { Truck as TruckType } from "@/types/freight";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
@@ -14,10 +14,11 @@ interface TruckCardProps {
   truck: TruckType;
   isAuthenticated: boolean;
   userRole?: string | null;
+  currentUserId?: string;
   onDelete?: () => void;
 }
 
-const TruckCard = ({ truck, isAuthenticated, userRole, onDelete }: TruckCardProps) => {
+const TruckCard = ({ truck, isAuthenticated, userRole, currentUserId, onDelete }: TruckCardProps) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -165,13 +166,26 @@ const TruckCard = ({ truck, isAuthenticated, userRole, onDelete }: TruckCardProp
         )}
       </CardContent>
       
-      <CardFooter className="pt-0 text-xs text-muted-foreground">
-        {isAuthenticated ? (
-          <>Posted {format(new Date(truck.created_at), "MMM d 'at' h:mm a")}</>
-        ) : (
-          <BlurredContent>
-            Posted {format(new Date(truck.created_at), "MMM d 'at' h:mm a")}
-          </BlurredContent>
+      <CardFooter className="pt-0 flex items-center justify-between">
+        <div className="text-xs text-muted-foreground">
+          {isAuthenticated ? (
+            <>Posted {format(new Date(truck.created_at), "MMM d 'at' h:mm a")}</>
+          ) : (
+            <BlurredContent>
+              Posted {format(new Date(truck.created_at), "MMM d 'at' h:mm a")}
+            </BlurredContent>
+          )}
+        </div>
+        {isAuthenticated && userRole === "shipper" && currentUserId !== truck.user_id && (
+          <Link 
+            to={`/messages?with=${truck.user_id}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Button variant="outline" size="sm" className="gap-2">
+              <MessageSquare className="h-4 w-4" />
+              Contact
+            </Button>
+          </Link>
         )}
       </CardFooter>
       </Card>

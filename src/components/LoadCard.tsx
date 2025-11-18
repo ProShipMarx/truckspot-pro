@@ -1,7 +1,7 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Calendar, Weight, Truck, DollarSign, Phone, Mail, Lock, Trash2 } from "lucide-react";
+import { MapPin, Calendar, Weight, Truck, DollarSign, Phone, Mail, Lock, Trash2, MessageSquare } from "lucide-react";
 import { Load } from "@/types/freight";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
@@ -14,10 +14,11 @@ interface LoadCardProps {
   load: Load;
   isAuthenticated: boolean;
   userRole?: string | null;
+  currentUserId?: string;
   onDelete?: () => void;
 }
 
-const LoadCard = ({ load, isAuthenticated, userRole, onDelete }: LoadCardProps) => {
+const LoadCard = ({ load, isAuthenticated, userRole, currentUserId, onDelete }: LoadCardProps) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -207,7 +208,8 @@ const LoadCard = ({ load, isAuthenticated, userRole, onDelete }: LoadCardProps) 
         )}
       </CardContent>
       
-        <CardFooter className="pt-0 text-xs text-muted-foreground">
+      <CardFooter className="pt-0 flex items-center justify-between">
+        <div className="text-xs text-muted-foreground">
           {isAuthenticated ? (
             <>Posted {format(new Date(load.postedDate), "MMM d 'at' h:mm a")}</>
           ) : (
@@ -215,7 +217,19 @@ const LoadCard = ({ load, isAuthenticated, userRole, onDelete }: LoadCardProps) 
               Posted {format(new Date(load.postedDate), "MMM d 'at' h:mm a")}
             </BlurredContent>
           )}
-        </CardFooter>
+        </div>
+        {isAuthenticated && userRole === "carrier" && currentUserId !== load.user_id && (
+          <Link 
+            to={`/messages?with=${load.user_id}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Button variant="outline" size="sm" className="gap-2">
+              <MessageSquare className="h-4 w-4" />
+              Contact
+            </Button>
+          </Link>
+        )}
+      </CardFooter>
         </Card>
       </Link>
 
