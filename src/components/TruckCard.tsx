@@ -179,7 +179,11 @@ const TruckCard = ({ truck, isAuthenticated, userRole, currentUserId, onDelete }
         {isAuthenticated && userRole === "shipper" && currentUserId !== truck.user_id && (
           <Link 
             to={`/messages?with=${truck.user_id}`}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              window.location.href = `/messages?with=${truck.user_id}`;
+            }}
           >
             <Button variant="outline" size="sm" className="gap-2">
               <MessageSquare className="h-4 w-4" />
