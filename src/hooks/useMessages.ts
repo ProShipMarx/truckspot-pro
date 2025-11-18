@@ -10,6 +10,7 @@ export interface Message {
   file_url: string | null;
   file_name: string | null;
   created_at: string;
+  read_at: string | null;
   sender_email?: string;
 }
 
@@ -40,6 +41,21 @@ export const useMessages = (conversationId: string | null) => {
         });
       } else {
         setMessages(data || []);
+        
+        // Mark messages as read (messages that were sent by others and haven't been read yet)
+        const currentUserId = (await supabase.auth.getUser()).data.user?.id;
+        if (currentUserId && data) {
+          const unreadMessageIds = data
+            .filter(msg => msg.sender_id !== currentUserId && !msg.read_at)
+            .map(msg => msg.id);
+          
+          if (unreadMessageIds.length > 0) {
+            await supabase
+              .from("messages")
+              .update({ read_at: new Date().toISOString() })
+              .in("id", unreadMessageIds);
+          }
+        }
       }
       setLoading(false);
     };
@@ -57,8 +73,18 @@ export const useMessages = (conversationId: string | null) => {
           table: "messages",
           filter: `conversation_id=eq.${conversationId}`,
         },
-        (payload) => {
-          setMessages((prev) => [...prev, payload.new as Message]);
+        async (payload) => {
+          const newMessage = payload.new as Message;
+          setMessages((prev) => [...prev, newMessage]);
+          
+          // Mark as read if it's not from the current user
+          const currentUserId = (await supabase.auth.getUser()).data.user?.id;
+          if (currentUserId && newMessage.sender_id !== currentUserId && !newMessage.read_at) {
+            await supabase
+              .from("messages")
+              .update({ read_at: new Date().toISOString() })
+              .eq("id", newMessage.id);
+          }
         }
       )
       .subscribe();

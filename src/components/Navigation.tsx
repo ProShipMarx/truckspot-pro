@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Truck, Package, User, Shield } from "lucide-react";
+import { Truck, Package, User, Shield, MessageSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -78,12 +78,20 @@ const Navigation = () => {
             )}
             
             {user ? (
-              <Button asChild variant="ghost" size="sm">
-                <Link to="/my-account">
-                  <User className="h-4 w-4 mr-2" />
-                  My Account
-                </Link>
-              </Button>
+              <>
+                <Button asChild variant="ghost" size="sm">
+                  <Link to="/conversations">
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    Messages
+                  </Link>
+                </Button>
+                <Button asChild variant="ghost" size="sm">
+                  <Link to="/my-account">
+                    <User className="h-4 w-4 mr-2" />
+                    My Account
+                  </Link>
+                </Button>
+              </>
             ) : (
               <Button asChild variant="default" size="sm">
                 <Link to="/auth">Login</Link>
