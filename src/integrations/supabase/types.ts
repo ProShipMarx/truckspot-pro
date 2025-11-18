@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      conversations: {
+        Row: {
+          carrier_id: string
+          created_at: string
+          id: string
+          shipper_id: string
+          updated_at: string
+        }
+        Insert: {
+          carrier_id: string
+          created_at?: string
+          id?: string
+          shipper_id: string
+          updated_at?: string
+        }
+        Update: {
+          carrier_id?: string
+          created_at?: string
+          id?: string
+          shipper_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       loads: {
         Row: {
           contact_email: string | null
@@ -79,6 +103,44 @@ export type Database = {
           weight?: number | null
         }
         Relationships: []
+      }
+      messages: {
+        Row: {
+          content: string | null
+          conversation_id: string
+          created_at: string
+          file_name: string | null
+          file_url: string | null
+          id: string
+          sender_id: string
+        }
+        Insert: {
+          content?: string | null
+          conversation_id: string
+          created_at?: string
+          file_name?: string | null
+          file_url?: string | null
+          id?: string
+          sender_id: string
+        }
+        Update: {
+          content?: string | null
+          conversation_id?: string
+          created_at?: string
+          file_name?: string | null
+          file_url?: string | null
+          id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
