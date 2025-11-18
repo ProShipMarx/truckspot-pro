@@ -32,7 +32,7 @@ const Messages = () => {
         description: "No recipient specified",
         variant: "destructive",
       });
-      navigate("/");
+      navigate("/conversations");
       return;
     }
 
@@ -60,7 +60,7 @@ const Messages = () => {
         description: "Could not verify user roles",
         variant: "destructive",
       });
-      navigate("/");
+      navigate("/conversations");
       return;
     }
 
@@ -81,7 +81,7 @@ const Messages = () => {
         description: "You can only message between shippers and carriers",
         variant: "destructive",
       });
-      navigate("/");
+      navigate("/conversations");
       return;
     }
 

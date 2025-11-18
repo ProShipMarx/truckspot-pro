@@ -219,7 +219,7 @@ const LoadCard = ({ load, isAuthenticated, userRole, currentUserId, onDelete }: 
             </BlurredContent>
           )}
         </div>
-        {isAuthenticated && userRole === "carrier" && currentUserId !== load.user_id && (
+        {isAuthenticated && userRole === "carrier" && !!load.user_id && currentUserId !== load.user_id && (
           <Button 
             variant="outline" 
             size="sm" 
@@ -227,7 +227,7 @@ const LoadCard = ({ load, isAuthenticated, userRole, currentUserId, onDelete }: 
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              window.location.href = `/messages?with=${load.user_id}`;
+              navigate(`/messages?with=${load.user_id}`);
             }}
           >
             <MessageSquare className="h-4 w-4" />
