@@ -43,20 +43,18 @@ const Messages = () => {
   const initializeConversation = async (recipientId: string) => {
     if (!user) return;
 
-    // Validate roles: shipper <-> carrier only
-    const { data: myRole } = await supabase
+    // Fetch all roles for both users (users can have multiple roles)
+    const { data: myRoles } = await supabase
       .from("user_roles")
       .select("role")
-      .eq("user_id", user.id)
-      .single();
+      .eq("user_id", user.id);
 
-    const { data: theirRole } = await supabase
+    const { data: theirRoles } = await supabase
       .from("user_roles")
       .select("role")
-      .eq("user_id", recipientId)
-      .single();
+      .eq("user_id", recipientId);
 
-    if (!myRole || !theirRole) {
+    if (!myRoles || !theirRoles || myRoles.length === 0 || theirRoles.length === 0) {
       toast({
         title: "Error",
         description: "Could not verify user roles",
@@ -66,16 +64,18 @@ const Messages = () => {
       return;
     }
 
-    const validPairs = [
-      { my: "shipper", their: "carrier" },
-      { my: "carrier", their: "shipper" },
-    ];
+    // Check if either user is an admin - admins can message anyone
+    const myRolesList = myRoles.map(r => r.role);
+    const theirRolesList = theirRoles.map(r => r.role);
+    const imAdmin = myRolesList.includes("admin");
+    const theyAreAdmin = theirRolesList.includes("admin");
 
-    const isValid = validPairs.some(
-      (pair) => myRole.role === pair.my && theirRole.role === pair.their
-    );
+    // Validate: admin can message anyone, or must be shipper-carrier pair
+    const hasShipper = myRolesList.includes("shipper") || theirRolesList.includes("shipper");
+    const hasCarrier = myRolesList.includes("carrier") || theirRolesList.includes("carrier");
+    const isValidPair = (hasShipper && hasCarrier) || imAdmin || theyAreAdmin;
 
-    if (!isValid) {
+    if (!isValidPair) {
       toast({
         title: "Not allowed",
         description: "You can only message between shippers and carriers",
@@ -97,9 +97,28 @@ const Messages = () => {
     }
 
     // Find or create conversation
-    const isShipper = myRole.role === "shipper";
-    const shipperId = isShipper ? user.id : recipientId;
-    const carrierId = isShipper ? recipientId : user.id;
+    // For admins, we'll place them in the shipper role for conversation purposes
+    const myPrimaryRole = imAdmin ? "admin" : myRolesList[0];
+    const theirPrimaryRole = theyAreAdmin ? "admin" : theirRolesList[0];
+    
+    // Determine shipper and carrier IDs
+    let shipperId: string;
+    let carrierId: string;
+    
+    if (imAdmin) {
+      // If I'm admin, I'm the "shipper" and they're the "carrier"
+      shipperId = user.id;
+      carrierId = recipientId;
+    } else if (theyAreAdmin) {
+      // If they're admin, they're the "shipper" and I'm the "carrier"
+      shipperId = recipientId;
+      carrierId = user.id;
+    } else {
+      // Normal shipper-carrier pair
+      const isShipper = myPrimaryRole === "shipper";
+      shipperId = isShipper ? user.id : recipientId;
+      carrierId = isShipper ? recipientId : user.id;
+    }
 
     let { data: conversation } = await supabase
       .from("conversations")
