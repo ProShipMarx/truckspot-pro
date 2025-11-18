@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Calendar, Weight, Truck, DollarSign, Phone, Mail, Lock, Trash2, MessageSquare } from "lucide-react";
 import { Load } from "@/types/freight";
 import { format } from "date-fns";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,6 +22,7 @@ const LoadCard = ({ load, isAuthenticated, userRole, currentUserId, onDelete }: 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const navigate = useNavigate();
   const BlurredContent = ({ children }: { children: React.ReactNode }) => (
     <div className="relative">
       <div className="blur-sm select-none">{children}</div>
@@ -76,8 +77,8 @@ const LoadCard = ({ load, isAuthenticated, userRole, currentUserId, onDelete }: 
 
   return (
     <>
-      <Link to={`/loads/${load.id}`} className="block">
-        <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer relative">
+      
+        <Card className="hover:shadow-lg transition-all duration-200 relative" onClick={() => navigate(`/loads/${load.id}`)}>
           {userRole === "admin" && (
             <Button
               variant="ghost"
@@ -170,13 +171,13 @@ const LoadCard = ({ load, isAuthenticated, userRole, currentUserId, onDelete }: 
               <Phone className="h-4 w-4 text-muted-foreground" />
               <span className="font-medium">{load.contactName}</span>
               <span className="text-muted-foreground">•</span>
-              <a href={`tel:${load.contactPhone}`} className="text-primary hover:underline">
+              <a href={`tel:${load.contactPhone}`} className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>
                 {load.contactPhone}
               </a>
             </div>
             <div className="flex items-center gap-2 text-sm">
               <Mail className="h-4 w-4 text-muted-foreground" />
-              <a href={`mailto:${load.contactEmail}`} className="text-primary hover:underline">
+              <a href={`mailto:${load.contactEmail}`} className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>
                 {load.contactEmail}
               </a>
             </div>
@@ -235,7 +236,6 @@ const LoadCard = ({ load, isAuthenticated, userRole, currentUserId, onDelete }: 
         )}
       </CardFooter>
         </Card>
-      </Link>
 
       <DeleteConfirmDialog
         open={showDeleteDialog}
