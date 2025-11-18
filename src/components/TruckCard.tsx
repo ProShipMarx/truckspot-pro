@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Calendar, Truck, Phone, Mail, Radio, Lock, Trash2, MessageSquare } from "lucide-react";
 import { Truck as TruckType } from "@/types/freight";
 import { format } from "date-fns";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,6 +22,7 @@ const TruckCard = ({ truck, isAuthenticated, userRole, currentUserId, onDelete }
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const navigate = useNavigate();
   const BlurredContent = ({ children }: { children: React.ReactNode }) => (
     <div className="relative">
       <div className="blur-sm select-none">{children}</div>
@@ -184,7 +185,7 @@ const TruckCard = ({ truck, isAuthenticated, userRole, currentUserId, onDelete }
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              window.location.href = `/messages?with=${truck.user_id}`;
+              navigate(`/messages?with=${truck.user_id}`);
             }}
           >
             <MessageSquare className="h-4 w-4" />
