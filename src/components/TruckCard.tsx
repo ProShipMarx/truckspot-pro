@@ -177,7 +177,7 @@ const TruckCard = ({ truck, isAuthenticated, userRole, currentUserId, onDelete }
             </BlurredContent>
           )}
         </div>
-        {isAuthenticated && userRole === "shipper" && currentUserId !== truck.user_id && (
+        {isAuthenticated && userRole === "shipper" && !!truck.user_id && currentUserId !== truck.user_id && (
           <Button 
             variant="outline" 
             size="sm" 
