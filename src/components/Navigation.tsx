@@ -80,7 +80,7 @@ const Navigation = () => {
             {user ? (
               <>
                 <Button asChild variant="ghost" size="sm">
-                  <Link to="/conversations">
+                  <Link to="/messages">
                     <MessageSquare className="h-4 w-4 mr-2" />
                     Messages
                   </Link>
