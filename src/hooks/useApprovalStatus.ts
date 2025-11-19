@@ -32,14 +32,29 @@ export const useApprovalStatus = () => {
         .eq("id", session.user.id)
         .maybeSingle();
 
-      const { data: roleData } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", session.user.id)
-        .maybeSingle();
+    // Fetch all roles (users can have multiple roles)
+    const { data: rolesData } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", session.user.id);
 
-      setStatus(profile?.status as ApprovalStatus || null);
-      setUserRole(roleData?.role as UserRole || null);
+    setStatus(profile?.status as ApprovalStatus || null);
+    
+    // Determine primary role: admin > carrier > shipper
+    if (rolesData && rolesData.length > 0) {
+      const roles = rolesData.map(r => r.role);
+      if (roles.includes("admin")) {
+        setUserRole("admin");
+      } else if (roles.includes("carrier")) {
+        setUserRole("carrier");
+      } else if (roles.includes("shipper")) {
+        setUserRole("shipper");
+      } else {
+        setUserRole(rolesData[0].role as UserRole);
+      }
+    } else {
+      setUserRole(null);
+    }
       setLoading(false);
 
       // Redirect pending users to pending page if not already there

@@ -20,6 +20,11 @@ const Messages = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Wait for auth to fully load
+    if (user === null && !isApproved) {
+      return; // Still loading
+    }
+
     if (!user || !isApproved) {
       navigate("/auth");
       return;
@@ -27,11 +32,7 @@ const Messages = () => {
 
     const recipientId = searchParams.get("with");
     if (!recipientId) {
-      toast({
-        title: "Error",
-        description: "No recipient specified",
-        variant: "destructive",
-      });
+      // Redirect to conversations inbox instead of showing error
       navigate("/conversations");
       return;
     }
@@ -149,12 +150,12 @@ const Messages = () => {
     setConversationId(conversation.id);
   };
 
-  if (loading || !conversationId) {
+  if (loading || !conversationId || !user) {
     return (
       <div className="min-h-screen bg-background">
         <Navigation />
         <div className="container mx-auto py-8">
-          <p className="text-center text-muted-foreground">Loading...</p>
+          <p className="text-center text-muted-foreground">Loading conversation...</p>
         </div>
       </div>
     );
