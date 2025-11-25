@@ -6,19 +6,25 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search, SlidersHorizontal, CalendarIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useQuery } from "@tanstack/react-query";
 import { Load } from "@/types/freight";
 import { useApprovalStatus } from "@/hooks/useApprovalStatus";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 const FindLoads = () => {
   const navigate = useNavigate();
   const [searchOrigin, setSearchOrigin] = useState("");
   const [searchDestination, setSearchDestination] = useState("");
   const [equipmentFilter, setEquipmentFilter] = useState<string>("all");
+  const [pickupDate, setPickupDate] = useState<Date | undefined>(undefined);
   const [user, setUser] = useState<User | null>(null);
   const { userRole, loading } = useApprovalStatus();
 
@@ -79,8 +85,9 @@ const FindLoads = () => {
     const matchesOrigin = !searchOrigin || load.origin.toLowerCase().includes(searchOrigin.toLowerCase());
     const matchesDestination = !searchDestination || load.destination.toLowerCase().includes(searchDestination.toLowerCase());
     const matchesEquipment = equipmentFilter === "all" || load.equipmentType === equipmentFilter;
+    const matchesPickupDate = !pickupDate || new Date(load.pickupDate) >= pickupDate;
     
-    return matchesOrigin && matchesDestination && matchesEquipment;
+    return matchesOrigin && matchesDestination && matchesEquipment && matchesPickupDate;
   });
 
   return (
@@ -143,6 +150,43 @@ const FindLoads = () => {
                     <SelectItem value="Box Truck">Box Truck</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Pickup Date</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !pickupDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {pickupDate ? format(pickupDate, "PPP") : "Any date"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={pickupDate}
+                      onSelect={setPickupDate}
+                      initialFocus
+                      className="pointer-events-auto"
+                    />
+                    {pickupDate && (
+                      <div className="p-3 border-t">
+                        <Button
+                          variant="ghost"
+                          className="w-full"
+                          onClick={() => setPickupDate(undefined)}
+                        >
+                          Clear date
+                        </Button>
+                      </div>
+                    )}
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
           </CardContent>
