@@ -56,6 +56,76 @@ export type Database = {
         }
         Relationships: []
       }
+      load_assignments: {
+        Row: {
+          carrier_id: string
+          carrier_notes: string | null
+          created_at: string | null
+          delivered_at: string | null
+          id: string
+          load_id: string
+          picked_up_at: string | null
+          requested_at: string | null
+          responded_at: string | null
+          shipper_id: string
+          shipper_notes: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          carrier_id: string
+          carrier_notes?: string | null
+          created_at?: string | null
+          delivered_at?: string | null
+          id?: string
+          load_id: string
+          picked_up_at?: string | null
+          requested_at?: string | null
+          responded_at?: string | null
+          shipper_id: string
+          shipper_notes?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          carrier_id?: string
+          carrier_notes?: string | null
+          created_at?: string | null
+          delivered_at?: string | null
+          id?: string
+          load_id?: string
+          picked_up_at?: string | null
+          requested_at?: string | null
+          responded_at?: string | null
+          shipper_id?: string
+          shipper_notes?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "load_assignments_carrier_id_fkey"
+            columns: ["carrier_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "load_assignments_load_id_fkey"
+            columns: ["load_id"]
+            isOneToOne: false
+            referencedRelation: "loads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "load_assignments_shipper_id_fkey"
+            columns: ["shipper_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       loads: {
         Row: {
           contact_email: string | null
@@ -165,23 +235,32 @@ export type Database = {
       }
       profiles: {
         Row: {
+          company_name: string | null
           created_at: string
           email: string
           id: string
+          mc_number: string | null
+          phone: string | null
           status: Database["public"]["Enums"]["approval_status"]
           updated_at: string
         }
         Insert: {
+          company_name?: string | null
           created_at?: string
           email: string
           id: string
+          mc_number?: string | null
+          phone?: string | null
           status?: Database["public"]["Enums"]["approval_status"]
           updated_at?: string
         }
         Update: {
+          company_name?: string | null
           created_at?: string
           email?: string
           id?: string
+          mc_number?: string | null
+          phone?: string | null
           status?: Database["public"]["Enums"]["approval_status"]
           updated_at?: string
         }
