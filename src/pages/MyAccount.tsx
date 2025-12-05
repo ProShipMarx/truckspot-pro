@@ -9,12 +9,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { User, Settings, Shield, LogOut, Pencil, Trash2, Package, Truck as TruckIcon } from "lucide-react";
+import { User, Settings, Shield, LogOut, Pencil, Trash2, Package, Truck as TruckIcon, Send, Inbox } from "lucide-react";
 import { Load, Truck } from "@/types/freight";
 import { EditLoadModal } from "@/components/EditLoadModal";
 import { EditTruckModal } from "@/components/EditTruckModal";
 import { DeleteConfirmDialog } from "@/components/DeleteConfirmDialog";
 import { format } from "date-fns";
+import { MyRequests } from "@/components/MyRequests";
+import { IncomingRequests } from "@/components/IncomingRequests";
 
 const MyAccount = () => {
   const navigate = useNavigate();
@@ -263,10 +265,23 @@ const MyAccount = () => {
         </div>
 
         <Tabs defaultValue="posts" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="posts">
               <Package className="h-4 w-4 mr-2" />
               My Posts
+            </TabsTrigger>
+            <TabsTrigger value="requests">
+              {userRole === "carrier" ? (
+                <>
+                  <Send className="h-4 w-4 mr-2" />
+                  My Requests
+                </>
+              ) : (
+                <>
+                  <Inbox className="h-4 w-4 mr-2" />
+                  Incoming
+                </>
+              )}
             </TabsTrigger>
             <TabsTrigger value="profile">
               <User className="h-4 w-4 mr-2" />
@@ -396,6 +411,11 @@ const MyAccount = () => {
                 </CardContent>
               </Card>
             )}
+          </TabsContent>
+
+          <TabsContent value="requests">
+            {user && userRole === "carrier" && <MyRequests userId={user.id} />}
+            {user && userRole === "shipper" && <IncomingRequests userId={user.id} />}
           </TabsContent>
 
           <TabsContent value="profile">

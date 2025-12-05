@@ -12,7 +12,14 @@ import { validatePassword } from "@/lib/passwordValidation";
 const SignupCarrier = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [signupData, setSignupData] = useState({ email: "", password: "", confirmPassword: "" });
+  const [signupData, setSignupData] = useState({ 
+    email: "", 
+    password: "", 
+    confirmPassword: "",
+    companyName: "",
+    phone: "",
+    mcNumber: "",
+  });
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -46,7 +53,10 @@ const SignupCarrier = () => {
       options: {
         emailRedirectTo: `${window.location.origin}/`,
         data: {
-          role: "carrier"
+          role: "carrier",
+          company_name: signupData.companyName,
+          phone: signupData.phone,
+          mc_number: signupData.mcNumber,
         }
       },
     });
@@ -80,6 +90,37 @@ const SignupCarrier = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSignup} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="companyName">Company Name</Label>
+                <Input
+                  id="companyName"
+                  placeholder="Your trucking company name"
+                  value={signupData.companyName}
+                  onChange={(e) => setSignupData({ ...signupData, companyName: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="mcNumber">MC Number</Label>
+                <Input
+                  id="mcNumber"
+                  placeholder="e.g., MC-123456"
+                  value={signupData.mcNumber}
+                  onChange={(e) => setSignupData({ ...signupData, mcNumber: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="(555) 123-4567"
+                  value={signupData.phone}
+                  onChange={(e) => setSignupData({ ...signupData, phone: e.target.value })}
+                  required
+                />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
