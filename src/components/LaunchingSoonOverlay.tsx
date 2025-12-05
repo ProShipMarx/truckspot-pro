@@ -92,7 +92,7 @@ const LaunchingSoonOverlay = () => {
               </div>
               <p className="font-medium">You're on the list!</p>
               <p className="text-sm text-muted-foreground mt-1">
-                We'll send you an email when we launch.
+                We'll send you an email when we launch. Want early access? You can create an account right now via the Login button above.
               </p>
             </div>
           )}
