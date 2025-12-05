@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Rocket, Mail, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const LaunchingSoonOverlay = () => {
   const [email, setEmail] = useState("");
@@ -13,15 +14,30 @@ const LaunchingSoonOverlay = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    const trimmedEmail = email.trim().toLowerCase();
+    
+    if (!trimmedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
       toast.error("Please enter a valid email address");
       return;
     }
 
     setIsLoading(true);
     
-    // Simulate submission - in production, this would save to a database
-    await new Promise(resolve => setTimeout(resolve, 800));
+    const { error } = await supabase
+      .from('email_signups')
+      .insert({ email: trimmedEmail });
+
+    if (error) {
+      setIsLoading(false);
+      if (error.code === '23505') {
+        // Duplicate email - treat as success
+        setIsSubmitted(true);
+        toast.success("You're already on the list!");
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
+      return;
+    }
     
     setIsSubmitted(true);
     setIsLoading(false);
