@@ -31,7 +31,7 @@ const LaunchingSoonOverlay = () => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Greyed out backdrop */}
-      <div className="absolute inset-0 bg-background/60" />
+      <div className="absolute inset-0 bg-background/60 backdrop-blur-[2px]" />
       
       {/* Popup card */}
       <Card className="relative z-10 w-full max-w-md mx-4 shadow-2xl border-2">
