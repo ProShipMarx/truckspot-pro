@@ -5,13 +5,16 @@ import { Package, Truck, Search, Phone, CheckCircle2, ArrowRight } from "lucide-
 import Navigation from "@/components/Navigation";
 import heroImage from "@/assets/hero-freight.jpg";
 import { useApprovalStatus } from "@/hooks/useApprovalStatus";
+import LaunchingSoonOverlay from "@/components/LaunchingSoonOverlay";
 
 const Index = () => {
-  const { user } = useApprovalStatus();
+  const { user, loading } = useApprovalStatus();
   const getRoute = (targetRoute: string) => user ? targetRoute : "/auth";
   
   return (
     <div className="min-h-screen bg-background">
+      {/* Show launching soon overlay for signed-out users */}
+      {!loading && !user && <LaunchingSoonOverlay />}
       <Navigation />
       
       {/* Hero Section */}
