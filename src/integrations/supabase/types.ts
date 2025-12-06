@@ -235,6 +235,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          business_address: string | null
           company_name: string | null
           created_at: string
           email: string
@@ -245,6 +246,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          business_address?: string | null
           company_name?: string | null
           created_at?: string
           email: string
@@ -255,6 +257,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          business_address?: string | null
           company_name?: string | null
           created_at?: string
           email?: string
@@ -352,7 +355,7 @@ export type Database = {
       is_user_approved: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      app_role: "carrier" | "shipper" | "admin"
+      app_role: "carrier" | "shipper" | "admin" | "receiver"
       approval_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
@@ -481,7 +484,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["carrier", "shipper", "admin"],
+      app_role: ["carrier", "shipper", "admin", "receiver"],
       approval_status: ["pending", "approved", "rejected"],
     },
   },
