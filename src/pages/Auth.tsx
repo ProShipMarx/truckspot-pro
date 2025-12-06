@@ -142,6 +142,13 @@ const Auth = () => {
                 >
                   Sign Up as Shipper
                 </Button>
+                <Button 
+                  className="w-full" 
+                  variant="secondary"
+                  onClick={() => navigate("/signup-receiver")}
+                >
+                  Sign Up as Receiver
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
