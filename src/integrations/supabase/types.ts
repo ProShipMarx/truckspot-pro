@@ -38,6 +38,80 @@ export type Database = {
         }
         Relationships: []
       }
+      delivery_confirmations: {
+        Row: {
+          carrier_confirmed_at: string | null
+          carrier_distance_from_destination: number | null
+          carrier_latitude: number | null
+          carrier_longitude: number | null
+          carrier_notes: string | null
+          confirmation_deadline: string | null
+          created_at: string
+          delivery_photo_url: string | null
+          escalated_to_admin_at: string | null
+          id: string
+          load_assignment_id: string
+          receiver_confirmed_at: string | null
+          receiver_id: string | null
+          receiver_notes: string | null
+          shipper_confirmed_at: string | null
+          shipper_notes: string | null
+          signature_url: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          carrier_confirmed_at?: string | null
+          carrier_distance_from_destination?: number | null
+          carrier_latitude?: number | null
+          carrier_longitude?: number | null
+          carrier_notes?: string | null
+          confirmation_deadline?: string | null
+          created_at?: string
+          delivery_photo_url?: string | null
+          escalated_to_admin_at?: string | null
+          id?: string
+          load_assignment_id: string
+          receiver_confirmed_at?: string | null
+          receiver_id?: string | null
+          receiver_notes?: string | null
+          shipper_confirmed_at?: string | null
+          shipper_notes?: string | null
+          signature_url?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          carrier_confirmed_at?: string | null
+          carrier_distance_from_destination?: number | null
+          carrier_latitude?: number | null
+          carrier_longitude?: number | null
+          carrier_notes?: string | null
+          confirmation_deadline?: string | null
+          created_at?: string
+          delivery_photo_url?: string | null
+          escalated_to_admin_at?: string | null
+          id?: string
+          load_assignment_id?: string
+          receiver_confirmed_at?: string | null
+          receiver_id?: string | null
+          receiver_notes?: string | null
+          shipper_confirmed_at?: string | null
+          shipper_notes?: string | null
+          signature_url?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "delivery_confirmations_load_assignment_id_fkey"
+            columns: ["load_assignment_id"]
+            isOneToOne: true
+            referencedRelation: "load_assignments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_signups: {
         Row: {
           created_at: string
@@ -269,6 +343,47 @@ export type Database = {
         }
         Relationships: []
       }
+      receiver_links: {
+        Row: {
+          claimed_at: string | null
+          confirmation_code: string
+          created_at: string
+          expires_at: string
+          id: string
+          load_id: string
+          receiver_id: string | null
+          shipper_id: string
+        }
+        Insert: {
+          claimed_at?: string | null
+          confirmation_code: string
+          created_at?: string
+          expires_at: string
+          id?: string
+          load_id: string
+          receiver_id?: string | null
+          shipper_id: string
+        }
+        Update: {
+          claimed_at?: string | null
+          confirmation_code?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          load_id?: string
+          receiver_id?: string | null
+          shipper_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receiver_links_load_id_fkey"
+            columns: ["load_id"]
+            isOneToOne: true
+            referencedRelation: "loads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trucks: {
         Row: {
           available_date: string
@@ -341,6 +456,7 @@ export type Database = {
     }
     Functions: {
       cleanup_soft_deleted_records: { Args: never; Returns: undefined }
+      generate_confirmation_code: { Args: never; Returns: string }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
