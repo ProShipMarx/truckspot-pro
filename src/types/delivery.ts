@@ -41,4 +41,4 @@ export interface ReceiverLink {
 }
 
 export const MAX_DISTANCE_MILES = 0.5; // Carrier must be within 0.5 miles
-export const CONFIRMATION_TIMEOUT_HOURS = 48; // Hours before escalation to admin
+export const CONFIRMATION_TIMEOUT_HOURS = 1; // Hours before escalation to admin
