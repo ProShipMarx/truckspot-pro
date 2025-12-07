@@ -138,11 +138,8 @@ export const CarrierDropOff = ({
     
     if (error) throw error;
     
-    const { data: urlData } = supabase.storage
-      .from('delivery-proofs')
-      .getPublicUrl(data.path);
-    
-    return urlData.publicUrl;
+    // Return the storage path instead of public URL - signed URLs will be generated when viewing
+    return data.path;
   };
 
   const handleSubmit = async () => {
