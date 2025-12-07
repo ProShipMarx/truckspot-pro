@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 
 type ApprovalStatus = "pending" | "approved" | "rejected" | null;
-type UserRole = "admin" | "carrier" | "shipper" | null;
+type UserRole = "admin" | "carrier" | "shipper" | "receiver" | null;
 
 export const useApprovalStatus = () => {
   const navigate = useNavigate();
@@ -40,7 +40,7 @@ export const useApprovalStatus = () => {
 
     setStatus(profile?.status as ApprovalStatus || null);
     
-    // Determine primary role: admin > carrier > shipper
+    // Determine primary role: admin > carrier > shipper > receiver
     if (rolesData && rolesData.length > 0) {
       const roles = rolesData.map(r => r.role);
       if (roles.includes("admin")) {
@@ -49,6 +49,8 @@ export const useApprovalStatus = () => {
         setUserRole("carrier");
       } else if (roles.includes("shipper")) {
         setUserRole("shipper");
+      } else if (roles.includes("receiver")) {
+        setUserRole("receiver");
       } else {
         setUserRole(rolesData[0].role as UserRole);
       }

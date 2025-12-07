@@ -22,6 +22,9 @@ import AdminDashboard from "./pages/AdminDashboard";
 import MyAccount from "./pages/MyAccount";
 import MessagingHub from "./pages/MessagingHub";
 import ClaimDelivery from "./pages/ClaimDelivery";
+import Favorites from "./pages/Favorites";
+import MyLoads from "./pages/MyLoads";
+import ReceiverDashboard from "./pages/ReceiverDashboard";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +53,9 @@ const App = () => (
           <Route path="/my-account" element={<MyAccount />} />
           <Route path="/messages" element={<MessagingHub />} />
           <Route path="/claim-delivery" element={<ClaimDelivery />} />
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/my-loads" element={<MyLoads />} />
+          <Route path="/my-deliveries" element={<ReceiverDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
