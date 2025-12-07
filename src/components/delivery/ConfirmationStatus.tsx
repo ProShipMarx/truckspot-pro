@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useDeliveryConfirmation } from '@/hooks/useDeliveryConfirmation';
+import { useDeliveryProofUrls } from '@/hooks/useSignedUrl';
 import { CheckCircle2, Clock, AlertTriangle, Loader2, XCircle, User, Truck as TruckIcon, Package } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { format } from 'date-fns';
@@ -20,6 +21,10 @@ export const ConfirmationStatus = ({
   onConfirmed
 }: ConfirmationStatusProps) => {
   const { confirmation, isLoading, confirmAsReceiver, confirmAsShipper, disputeDelivery } = useDeliveryConfirmation(loadAssignmentId);
+  const { photoUrl, signatureUrl, isLoading: urlsLoading } = useDeliveryProofUrls(
+    confirmation?.delivery_photo_url,
+    confirmation?.signature_url
+  );
   const [notes, setNotes] = useState('');
   const [isConfirming, setIsConfirming] = useState(false);
   const [showDispute, setShowDispute] = useState(false);
@@ -46,7 +51,7 @@ export const ConfirmationStatus = ({
     setIsDisputing(false);
   };
 
-  if (isLoading) {
+  if (isLoading || urlsLoading) {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-8">
@@ -166,22 +171,22 @@ export const ConfirmationStatus = ({
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Delivery proof preview */}
-          {confirmation.delivery_photo_url && (
+          {photoUrl && (
             <div className="space-y-2">
               <Label>Delivery Photo</Label>
               <img 
-                src={confirmation.delivery_photo_url} 
+                src={photoUrl} 
                 alt="Delivery proof" 
                 className="w-full h-48 object-cover rounded-lg"
               />
             </div>
           )}
 
-          {confirmation.signature_url && (
+          {signatureUrl && (
             <div className="space-y-2">
               <Label>Signature</Label>
               <img 
-                src={confirmation.signature_url} 
+                src={signatureUrl} 
                 alt="Signature" 
                 className="w-full h-24 object-contain rounded-lg bg-muted/50"
               />
