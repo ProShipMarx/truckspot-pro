@@ -38,7 +38,7 @@ export interface LoadAssignment {
   load_id: string;
   carrier_id: string;
   shipper_id: string;
-  status: 'pending' | 'accepted' | 'rejected' | 'picked_up' | 'in_transit' | 'delivered';
+  status: 'pending' | 'accepted' | 'rejected' | 'picked_up' | 'in_transit' | 'delivered' | 'confirmed';
   carrier_notes?: string;
   shipper_notes?: string;
   requested_at: string;
@@ -66,3 +66,6 @@ export interface LoadAssignment {
 }
 
 export type EquipmentType = "Dry Van" | "Flatbed" | "Reefer" | "Step Deck" | "Tanker" | "Box Truck";
+
+// Re-export delivery types for convenience
+export type { DeliveryConfirmation, ReceiverLink } from './delivery';
