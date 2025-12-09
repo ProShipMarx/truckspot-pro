@@ -75,7 +75,7 @@ const TruckCard = ({ truck, isAuthenticated, userRole, currentUserId, onDelete }
 
   return (
     <>
-      <Card className="hover:shadow-lg transition-all duration-200 relative">
+      <Card className="hover:shadow-lg transition-all duration-200 relative cursor-pointer" onClick={() => navigate(`/trucks/${truck.id}`)}>
         {userRole === "admin" && (
           <Button
             variant="ghost"

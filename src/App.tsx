@@ -9,6 +9,7 @@ import PostTruck from "./pages/PostTruck";
 import FindLoads from "./pages/FindLoads";
 import FindTrucks from "./pages/FindTrucks";
 import LoadDetail from "./pages/LoadDetail";
+import TruckDetail from "./pages/TruckDetail";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import SignupCarrier from "./pages/SignupCarrier";
@@ -48,6 +49,7 @@ const App = () => (
           <Route path="/find-loads" element={<FindLoads />} />
           <Route path="/loads/:id" element={<LoadDetail />} />
           <Route path="/find-trucks" element={<FindTrucks />} />
+          <Route path="/trucks/:id" element={<TruckDetail />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/my-account" element={<MyAccount />} />
