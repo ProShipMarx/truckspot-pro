@@ -7,8 +7,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Package, Truck, Clock, CheckCircle2, AlertCircle, MapPin, Calendar, DollarSign, Eye } from "lucide-react";
+import { Package, Truck, Clock, CheckCircle2, AlertCircle, MapPin, Calendar, DollarSign, Eye, Plus } from "lucide-react";
 import { format } from "date-fns";
+
+interface PostedLoad {
+  id: string;
+  origin: string;
+  destination: string;
+  pickup_date: string;
+  rate: number | null;
+  equipment_type: string;
+  created_at: string;
+}
 
 interface LoadAssignment {
   id: string;
@@ -61,6 +71,7 @@ const MyLoads = () => {
   const { user, userRole, loading: authLoading } = useApprovalStatus();
   const [assignments, setAssignments] = useState<LoadAssignment[]>([]);
   const [receiverLoads, setReceiverLoads] = useState<ReceiverLoad[]>([]);
+  const [postedLoads, setPostedLoads] = useState<PostedLoad[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -81,6 +92,18 @@ const MyLoads = () => {
 
     try {
       if (userRole === "shipper" || userRole === "admin") {
+        // Fetch loads posted by user
+        const { data: myLoads } = await supabase
+          .from('loads')
+          .select('id, origin, destination, pickup_date, rate, equipment_type, created_at')
+          .eq('user_id', user.id)
+          .is('deleted_at', null)
+          .order('created_at', { ascending: false });
+
+        if (myLoads) {
+          setPostedLoads(myLoads);
+        }
+
         // Fetch assignments where user is shipper
         const { data: shipperAssignments } = await supabase
           .from('load_assignments')
@@ -253,6 +276,42 @@ const MyLoads = () => {
     </Card>
   );
 
+  const PostedLoadCard = ({ load }: { load: PostedLoad }) => (
+    <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate(`/loads/${load.id}`)}>
+      <CardContent className="pt-6">
+        <div className="flex justify-between items-start">
+          <div className="space-y-2 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Badge variant="outline">{load.equipment_type}</Badge>
+            </div>
+            <div className="flex items-center gap-2 font-semibold">
+              <MapPin className="h-4 w-4 text-muted-foreground" />
+              {load.origin} → {load.destination}
+            </div>
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Calendar className="h-4 w-4" />
+                {format(new Date(load.pickup_date), "MMM d, yyyy")}
+              </div>
+              {load.rate && (
+                <div className="flex items-center gap-1">
+                  <DollarSign className="h-4 w-4" />
+                  {load.rate.toLocaleString()}
+                </div>
+              )}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              Posted {format(new Date(load.created_at), "MMM d, yyyy")}
+            </div>
+          </div>
+          <Button variant="ghost" size="icon">
+            <Eye className="h-4 w-4" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
   const ReceiverLoadCard = ({ load }: { load: ReceiverLoad }) => (
     <Card>
       <CardContent className="pt-6">
@@ -341,13 +400,38 @@ const MyLoads = () => {
           </Tabs>
         ) : (
           // Shipper/Carrier view
-          <Tabs defaultValue="active" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4">
+          <Tabs defaultValue={userRole === "shipper" || userRole === "admin" ? "posted" : "active"} className="space-y-6">
+            <TabsList className={`grid w-full ${userRole === "shipper" || userRole === "admin" ? "grid-cols-5" : "grid-cols-4"}`}>
+              {(userRole === "shipper" || userRole === "admin") && (
+                <TabsTrigger value="posted">My Posts ({postedLoads.length})</TabsTrigger>
+              )}
               <TabsTrigger value="active">Active ({active.length})</TabsTrigger>
               <TabsTrigger value="pending">Pending ({pending.length})</TabsTrigger>
               <TabsTrigger value="completed">Completed ({completed.length})</TabsTrigger>
               <TabsTrigger value="rejected">Rejected ({rejected.length})</TabsTrigger>
             </TabsList>
+
+            {(userRole === "shipper" || userRole === "admin") && (
+              <TabsContent value="posted" className="space-y-4">
+                {postedLoads.length === 0 ? (
+                  <Card>
+                    <CardContent className="py-12 text-center">
+                      <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                      <h3 className="text-lg font-semibold mb-2">No posted loads</h3>
+                      <p className="text-muted-foreground mb-4">
+                        You haven't posted any loads yet
+                      </p>
+                      <Button onClick={() => navigate("/post-load")}>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Post a Load
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  postedLoads.map(load => <PostedLoadCard key={load.id} load={load} />)
+                )}
+              </TabsContent>
+            )}
 
             <TabsContent value="active" className="space-y-4">
               {active.length === 0 ? (

@@ -113,8 +113,13 @@ const PostLoad = () => {
     }
 
     toast.success("Load posted successfully!");
-    navigate("/find-loads");
+    navigate("/my-account");
   };
+
+  // Calculate $/mi when rate or distance changes
+  const ratePerMile = formData.rate && formData.distance 
+    ? (parseFloat(formData.rate) / parseFloat(formData.distance)).toFixed(2) 
+    : null;
 
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -271,6 +276,11 @@ const PostLoad = () => {
                     value={formData.rate}
                     onChange={(e) => handleChange("rate", e.target.value)}
                   />
+                  {ratePerMile && (
+                    <p className="text-sm text-muted-foreground">
+                      ${ratePerMile}/mi
+                    </p>
+                  )}
                 </div>
               </div>
 
