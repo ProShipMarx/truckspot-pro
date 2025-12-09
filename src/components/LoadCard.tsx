@@ -1,7 +1,7 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Calendar, Weight, Truck, DollarSign, Phone, Mail, Lock, Trash2 } from "lucide-react";
+import { MapPin, Calendar, Weight, Truck, DollarSign, Phone, Mail, Lock, Trash2, MessageSquare } from "lucide-react";
 import { Load } from "@/types/freight";
 import { format } from "date-fns";
 import { Link, useNavigate } from "react-router-dom";
@@ -220,14 +220,31 @@ const LoadCard = ({ load, isAuthenticated, userRole, currentUserId, onDelete }: 
             </BlurredContent>
           )}
         </div>
-        {isAuthenticated && !!load.user_id && currentUserId !== load.user_id && (
-          <RequestLoadButton
-            loadId={load.id}
-            shipperId={load.user_id}
-            currentUserId={currentUserId}
-            userRole={userRole}
-          />
-        )}
+        <div className="flex items-center gap-2">
+          {isAuthenticated && userRole === 'carrier' && !!load.user_id && currentUserId !== load.user_id && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigate(`/messages?with=${load.user_id}`);
+              }}
+            >
+              <MessageSquare className="h-4 w-4" />
+              Contact
+            </Button>
+          )}
+          {isAuthenticated && !!load.user_id && currentUserId !== load.user_id && (
+            <RequestLoadButton
+              loadId={load.id}
+              shipperId={load.user_id}
+              currentUserId={currentUserId}
+              userRole={userRole}
+            />
+          )}
+        </div>
       </CardFooter>
         </Card>
 
