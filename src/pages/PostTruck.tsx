@@ -89,7 +89,7 @@ const PostTruck = () => {
       if (error) throw error;
 
       toast.success("Truck posted successfully!");
-      navigate("/find-trucks");
+      navigate("/my-account");
     } catch (error: any) {
       toast.error(error.message || "Failed to post truck");
     }

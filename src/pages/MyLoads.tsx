@@ -66,12 +66,22 @@ interface ReceiverLoad {
   };
 }
 
+interface PostedTruck {
+  id: string;
+  location: string;
+  equipment_type: string;
+  available_date: string;
+  radius: number | null;
+  created_at: string;
+}
+
 const MyLoads = () => {
   const navigate = useNavigate();
   const { user, userRole, loading: authLoading } = useApprovalStatus();
   const [assignments, setAssignments] = useState<LoadAssignment[]>([]);
   const [receiverLoads, setReceiverLoads] = useState<ReceiverLoad[]>([]);
   const [postedLoads, setPostedLoads] = useState<PostedLoad[]>([]);
+  const [postedTrucks, setPostedTrucks] = useState<PostedTruck[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -118,6 +128,18 @@ const MyLoads = () => {
       }
 
       if (userRole === "carrier" || userRole === "admin") {
+        // Fetch trucks posted by carrier
+        const { data: myTrucks } = await supabase
+          .from('trucks')
+          .select('id, location, equipment_type, available_date, radius, created_at')
+          .eq('user_id', user.id)
+          .is('deleted_at', null)
+          .order('created_at', { ascending: false });
+
+        if (myTrucks) {
+          setPostedTrucks(myTrucks);
+        }
+
         // Fetch assignments where user is carrier
         const { data: carrierAssignments } = await supabase
           .from('load_assignments')
@@ -312,6 +334,37 @@ const MyLoads = () => {
     </Card>
   );
 
+  const PostedTruckCard = ({ truck }: { truck: PostedTruck }) => (
+    <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate("/my-account")}>
+      <CardContent className="pt-6">
+        <div className="flex justify-between items-start">
+          <div className="space-y-2 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Badge variant="outline">{truck.equipment_type}</Badge>
+              {truck.radius && <Badge variant="secondary">{truck.radius} mi radius</Badge>}
+            </div>
+            <div className="flex items-center gap-2 font-semibold">
+              <MapPin className="h-4 w-4 text-muted-foreground" />
+              {truck.location}
+            </div>
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Calendar className="h-4 w-4" />
+                Available: {format(new Date(truck.available_date), "MMM d, yyyy")}
+              </div>
+            </div>
+            <div className="text-xs text-muted-foreground">
+              Posted {format(new Date(truck.created_at), "MMM d, yyyy")}
+            </div>
+          </div>
+          <Button variant="ghost" size="icon">
+            <Eye className="h-4 w-4" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
   const ReceiverLoadCard = ({ load }: { load: ReceiverLoad }) => (
     <Card>
       <CardContent className="pt-6">
@@ -400,10 +453,13 @@ const MyLoads = () => {
           </Tabs>
         ) : (
           // Shipper/Carrier view
-          <Tabs defaultValue={userRole === "shipper" || userRole === "admin" ? "posted" : "active"} className="space-y-6">
-            <TabsList className={`grid w-full ${userRole === "shipper" || userRole === "admin" ? "grid-cols-5" : "grid-cols-4"}`}>
+          <Tabs defaultValue={userRole === "shipper" ? "posted" : userRole === "carrier" ? "trucks" : "posted"} className="space-y-6">
+            <TabsList className="flex flex-wrap">
               {(userRole === "shipper" || userRole === "admin") && (
                 <TabsTrigger value="posted">My Posts ({postedLoads.length})</TabsTrigger>
+              )}
+              {(userRole === "carrier" || userRole === "admin") && (
+                <TabsTrigger value="trucks">My Trucks ({postedTrucks.length})</TabsTrigger>
               )}
               <TabsTrigger value="active">Active ({active.length})</TabsTrigger>
               <TabsTrigger value="pending">Pending ({pending.length})</TabsTrigger>
@@ -429,6 +485,28 @@ const MyLoads = () => {
                   </Card>
                 ) : (
                   postedLoads.map(load => <PostedLoadCard key={load.id} load={load} />)
+                )}
+              </TabsContent>
+            )}
+
+            {(userRole === "carrier" || userRole === "admin") && (
+              <TabsContent value="trucks" className="space-y-4">
+                {postedTrucks.length === 0 ? (
+                  <Card>
+                    <CardContent className="py-12 text-center">
+                      <Truck className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                      <h3 className="text-lg font-semibold mb-2">No posted trucks</h3>
+                      <p className="text-muted-foreground mb-4">
+                        You haven't posted any trucks yet
+                      </p>
+                      <Button onClick={() => navigate("/post-truck")}>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Post a Truck
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  postedTrucks.map(truck => <PostedTruckCard key={truck.id} truck={truck} />)
                 )}
               </TabsContent>
             )}
