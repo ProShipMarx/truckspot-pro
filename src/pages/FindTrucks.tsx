@@ -17,6 +17,7 @@ const FindTrucks = () => {
   const navigate = useNavigate();
   const [searchLocation, setSearchLocation] = useState("");
   const [equipmentFilter, setEquipmentFilter] = useState<string>("all");
+  const [availableDateFilter, setAvailableDateFilter] = useState("");
   const [user, setUser] = useState<User | null>(null);
   const [trucks, setTrucks] = useState<Truck[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -69,8 +70,9 @@ const FindTrucks = () => {
   const filteredTrucks = trucks.filter(truck => {
     const matchesLocation = !searchLocation || truck.location.toLowerCase().includes(searchLocation.toLowerCase());
     const matchesEquipment = equipmentFilter === "all" || truck.equipment_type === equipmentFilter;
+    const matchesDate = !availableDateFilter || new Date(truck.available_date) <= new Date(availableDateFilter);
     
-    return matchesLocation && matchesEquipment;
+    return matchesLocation && matchesEquipment && matchesDate;
   });
 
   return (
@@ -120,6 +122,15 @@ const FindTrucks = () => {
                     <SelectItem value="Box Truck">Box Truck</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="availableDate">Available By</Label>
+                <Input
+                  id="availableDate"
+                  type="date"
+                  value={availableDateFilter}
+                  onChange={(e) => setAvailableDateFilter(e.target.value)}
+                />
               </div>
             </div>
           </CardContent>

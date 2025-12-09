@@ -10,14 +10,20 @@ import { format } from "date-fns";
 import { useGoogleMaps } from "@/hooks/useGoogleMaps";
 import { LoadMapWithRoute } from "@/components/LoadMapWithRoute";
 import { Load } from "@/types/freight";
+import { useApprovalStatus } from "@/hooks/useApprovalStatus";
+import { GenerateReceiverCode } from "@/components/delivery/GenerateReceiverCode";
 
 const LoadDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { isLoaded, loadError } = useGoogleMaps();
+  const { user, userRole } = useApprovalStatus();
   const [load, setLoad] = useState<Load | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  const isOwnLoad = user && load && user.id === load.user_id;
+  const canGenerateReceiverCode = isOwnLoad && (userRole === "shipper" || userRole === "admin");
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -216,6 +222,13 @@ const LoadDetail = () => {
                     <Button asChild>
                       <Link to="/auth">Login</Link>
                     </Button>
+                  </div>
+                )}
+
+                {/* Generate Receiver Code for shipper's own loads */}
+                {canGenerateReceiverCode && id && (
+                  <div className="border-t pt-6">
+                    <GenerateReceiverCode loadId={id} />
                   </div>
                 )}
               </CardContent>
