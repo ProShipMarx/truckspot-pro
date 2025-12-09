@@ -298,7 +298,8 @@ const MyAccount = () => {
           </TabsList>
 
           <TabsContent value="posts" className="space-y-6">
-            {userRole === "shipper" && (
+            {/* Show loads for shippers and admins */}
+            {(userRole === "shipper" || userRole === "admin") && (
               <Card>
                 <CardHeader>
                   <CardTitle>My Loads</CardTitle>
@@ -310,7 +311,7 @@ const MyAccount = () => {
                   ) : (
                     <div className="space-y-4">
                       {loads.map((load) => (
-                        <Card key={load.id}>
+                        <Card key={load.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate(`/loads/${load.id}`)}>
                           <CardContent className="pt-6">
                             <div className="flex justify-between items-start">
                               <div className="space-y-2 flex-1">
@@ -330,7 +331,7 @@ const MyAccount = () => {
                                   Pickup: {format(new Date(load.pickupDate), "MMM d, yyyy")}
                                 </div>
                               </div>
-                              <div className="flex gap-2">
+                              <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                                 <Button
                                   variant="outline"
                                   size="sm"
@@ -356,7 +357,8 @@ const MyAccount = () => {
               </Card>
             )}
 
-            {userRole === "carrier" && (
+            {/* Show trucks for carriers and admins */}
+            {(userRole === "carrier" || userRole === "admin") && (
               <Card>
                 <CardHeader>
                   <CardTitle>My Trucks</CardTitle>
@@ -368,7 +370,7 @@ const MyAccount = () => {
                   ) : (
                     <div className="space-y-4">
                       {trucks.map((truck) => (
-                        <Card key={truck.id}>
+                        <Card key={truck.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate(`/trucks/${truck.id}`)}>
                           <CardContent className="pt-6">
                             <div className="flex justify-between items-start">
                               <div className="space-y-2 flex-1">
@@ -386,7 +388,7 @@ const MyAccount = () => {
                                   Available: {format(new Date(truck.available_date), "MMM d, yyyy")}
                                 </div>
                               </div>
-                              <div className="flex gap-2">
+                              <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                                 <Button
                                   variant="outline"
                                   size="sm"
@@ -415,7 +417,7 @@ const MyAccount = () => {
 
           <TabsContent value="requests">
             {user && userRole === "carrier" && <MyRequests userId={user.id} />}
-            {user && userRole === "shipper" && <IncomingRequests userId={user.id} />}
+            {user && (userRole === "shipper" || userRole === "admin") && <IncomingRequests userId={user.id} />}
           </TabsContent>
 
           <TabsContent value="profile">

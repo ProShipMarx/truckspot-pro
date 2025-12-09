@@ -335,7 +335,7 @@ const MyLoads = () => {
   );
 
   const PostedTruckCard = ({ truck }: { truck: PostedTruck }) => (
-    <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate("/my-account")}>
+    <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate(`/trucks/${truck.id}`)}>
       <CardContent className="pt-6">
         <div className="flex justify-between items-start">
           <div className="space-y-2 flex-1">
