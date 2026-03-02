@@ -50,6 +50,10 @@ const BrokerAgent = () => {
   const navigate = useNavigate();
   const { user, userRole, loading: authLoading } = useApprovalStatus();
 
+  // Subscription gate
+  const [subChecked, setSubChecked] = useState(false);
+  const [subscribed, setSubscribed] = useState(false);
+
   // Credentials state
   const [credentials, setCredentials] = useState<Credential[]>([]);
   const [credLoading, setCredLoading] = useState(true);
@@ -73,6 +77,22 @@ const BrokerAgent = () => {
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth");
   }, [user, authLoading, navigate]);
+
+  // Check subscription status
+  useEffect(() => {
+    const checkSub = async () => {
+      if (!user) { setSubChecked(true); return; }
+      try {
+        const { data, error } = await supabase.functions.invoke("check-subscription");
+        if (error) throw error;
+        setSubscribed(data?.subscribed === true);
+      } catch {
+        setSubscribed(false);
+      }
+      setSubChecked(true);
+    };
+    if (!authLoading) checkSub();
+  }, [user, authLoading]);
 
   useEffect(() => {
     if (user) fetchCredentials();
@@ -188,10 +208,28 @@ const BrokerAgent = () => {
 
   const connectedPlatformIds = credentials.filter((c) => c.is_active).map((c) => c.platform);
 
-  if (authLoading) {
+  if (authLoading || !subChecked) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (!subscribed) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main className="container mx-auto px-4 py-16 max-w-lg text-center">
+          <Bot className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+          <h1 className="text-2xl font-bold mb-2">Subscription Required</h1>
+          <p className="text-muted-foreground mb-6">
+            The Broker Agent is available exclusively to ProShip Pro subscribers.
+          </p>
+          <Button onClick={() => navigate("/pricing")} size="lg">
+            View Plans &amp; Subscribe
+          </Button>
+        </main>
       </div>
     );
   }
