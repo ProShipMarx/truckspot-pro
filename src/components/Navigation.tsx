@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Truck, Package, User, Shield, MessageSquare, Heart, Inbox, Menu, X } from "lucide-react";
+import { Truck, Package, User, Shield, MessageSquare, Heart, Inbox, Menu, X, Bot } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -96,6 +96,14 @@ const Navigation = () => {
                 <Link to="/my-loads">
                   <Package className="h-4 w-4 mr-2" />
                   My Loads
+                </Link>
+              </Button>
+            )}
+            {(userRole === "carrier" || userRole === "admin") && (
+              <Button asChild variant="ghost" size="sm" className={linkClass} onClick={closeMobileMenu}>
+                <Link to="/broker-agent">
+                  <Bot className="h-4 w-4 mr-2" />
+                  Broker Agent
                 </Link>
               </Button>
             )}
