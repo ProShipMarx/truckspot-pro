@@ -27,6 +27,7 @@ import Favorites from "./pages/Favorites";
 import MyLoads from "./pages/MyLoads";
 import ReceiverDashboard from "./pages/ReceiverDashboard";
 import BrokerAgent from "./pages/BrokerAgent";
+import Pricing from "./pages/Pricing";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +61,7 @@ const App = () => (
           <Route path="/my-loads" element={<MyLoads />} />
           <Route path="/my-deliveries" element={<ReceiverDashboard />} />
           <Route path="/broker-agent" element={<BrokerAgent />} />
+          <Route path="/pricing" element={<Pricing />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
