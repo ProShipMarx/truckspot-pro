@@ -26,6 +26,7 @@ import ClaimDelivery from "./pages/ClaimDelivery";
 import Favorites from "./pages/Favorites";
 import MyLoads from "./pages/MyLoads";
 import ReceiverDashboard from "./pages/ReceiverDashboard";
+import BrokerAgent from "./pages/BrokerAgent";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +59,7 @@ const App = () => (
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/my-loads" element={<MyLoads />} />
           <Route path="/my-deliveries" element={<ReceiverDashboard />} />
+          <Route path="/broker-agent" element={<BrokerAgent />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

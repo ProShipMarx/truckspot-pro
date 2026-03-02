@@ -14,6 +14,96 @@ export type Database = {
   }
   public: {
     Tables: {
+      broker_searches: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          date_from: string | null
+          date_to: string | null
+          destination: string
+          equipment_type: string
+          error_message: string | null
+          id: string
+          origin: string
+          platforms_searched: string[]
+          radius_miles: number | null
+          results: Json | null
+          results_count: number | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          date_from?: string | null
+          date_to?: string | null
+          destination: string
+          equipment_type: string
+          error_message?: string | null
+          id?: string
+          origin: string
+          platforms_searched?: string[]
+          radius_miles?: number | null
+          results?: Json | null
+          results_count?: number | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          date_from?: string | null
+          date_to?: string | null
+          destination?: string
+          equipment_type?: string
+          error_message?: string | null
+          id?: string
+          origin?: string
+          platforms_searched?: string[]
+          radius_miles?: number | null
+          results?: Json | null
+          results_count?: number | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      carrier_credentials: {
+        Row: {
+          created_at: string
+          encrypted_password: string
+          encrypted_username: string
+          id: string
+          is_active: boolean
+          last_used_at: string | null
+          platform: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          encrypted_password: string
+          encrypted_username: string
+          id?: string
+          is_active?: boolean
+          last_used_at?: string | null
+          platform: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          encrypted_password?: string
+          encrypted_username?: string
+          id?: string
+          is_active?: boolean
+          last_used_at?: string | null
+          platform?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           carrier_id: string
