@@ -17,7 +17,7 @@ import SignupShipper from "./pages/SignupShipper";
 import SignupReceiver from "./pages/SignupReceiver";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import PendingApproval from "./pages/PendingApproval";
+
 import Admin from "./pages/Admin";
 import AdminDashboard from "./pages/AdminDashboard";
 import MyAccount from "./pages/MyAccount";
@@ -43,7 +43,7 @@ const App = () => (
           <Route path="/signup-carrier" element={<SignupCarrier />} />
           <Route path="/signup-shipper" element={<SignupShipper />} />
           <Route path="/signup-receiver" element={<SignupReceiver />} />
-          <Route path="/pending-approval" element={<PendingApproval />} />
+          
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/post-load" element={<PostLoad />} />
