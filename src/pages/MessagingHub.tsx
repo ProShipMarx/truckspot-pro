@@ -34,17 +34,6 @@ export default function MessagingHub() {
 
       setCurrentUserId(session.user.id);
 
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("status")
-        .eq("id", session.user.id)
-        .single();
-
-      if (profile?.status !== "approved") {
-        navigate("/pending-approval");
-        return;
-      }
-
       setIsApproved(true);
       setAuthLoading(false);
     };

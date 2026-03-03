@@ -66,8 +66,8 @@ const SignupShipper = () => {
     }
 
     if (data.user) {
-      toast.success("Shipper account created successfully! Your account is pending approval.");
-      navigate("/pending-approval");
+      toast.success("Shipper account created! Please check your email to verify, then subscribe to get started.");
+      navigate("/pricing");
     }
     
     setLoading(false);

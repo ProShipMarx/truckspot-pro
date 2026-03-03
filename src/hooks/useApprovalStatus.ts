@@ -58,17 +58,6 @@ export const useApprovalStatus = () => {
       setUserRole(null);
     }
       setLoading(false);
-
-      // Redirect pending users to pending page if not already there
-      if (profile?.status === "pending" && window.location.pathname !== "/pending-approval") {
-        navigate("/pending-approval");
-      }
-
-      // Redirect rejected users to login
-      if (profile?.status === "rejected") {
-        await supabase.auth.signOut();
-        navigate("/auth");
-      }
     };
 
     checkStatus();

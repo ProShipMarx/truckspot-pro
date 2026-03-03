@@ -38,22 +38,8 @@ const Auth = () => {
     }
 
     if (data.user) {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("status")
-        .eq("id", data.user.id)
-        .maybeSingle();
-
-      if (profile?.status === "pending") {
-        toast.info("Your account is pending approval");
-        navigate("/pending-approval");
-      } else if (profile?.status === "rejected") {
-        toast.error("Your account has been rejected");
-        await supabase.auth.signOut();
-      } else {
-        toast.success("Logged in successfully!");
-        navigate("/");
-      }
+      toast.success("Logged in successfully!");
+      navigate("/");
     }
     
     setLoading(false);
