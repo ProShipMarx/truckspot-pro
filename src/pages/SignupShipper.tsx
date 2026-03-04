@@ -66,7 +66,7 @@ const SignupShipper = () => {
     }
 
     if (data.user) {
-      toast.success("Shipper account created! Please check your email to verify, then subscribe to get started.");
+      toast.success("Shipper account created! Subscribe to get started.");
       navigate("/pricing");
     }
     
