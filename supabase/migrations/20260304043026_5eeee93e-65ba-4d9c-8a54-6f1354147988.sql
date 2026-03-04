@@ -1,0 +1,1 @@
+UPDATE public.profiles SET status = 'approved' WHERE status = 'pending';
