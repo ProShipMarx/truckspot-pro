@@ -68,7 +68,7 @@ const SignupCarrier = () => {
     }
 
     if (data.user) {
-      toast.success("Carrier account created! Please check your email to verify, then subscribe to get started.");
+      toast.success("Carrier account created! Subscribe to get started.");
       navigate("/pricing");
     }
     

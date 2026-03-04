@@ -68,7 +68,7 @@ const SignupReceiver = () => {
     }
 
     if (data.user) {
-      toast.success("Receiver account created! Please check your email to verify, then subscribe to get started.");
+      toast.success("Receiver account created! Subscribe to get started.");
       navigate("/pricing");
     }
     
